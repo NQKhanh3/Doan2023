@@ -18,9 +18,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'email',
-        'password',
+        'mat_khau',
+        'vai_tro_id',
+        'google_id',
+        'username',
+        'hinh_dai_dien',
+        'bi_khoa'
     ];
 
     /**
@@ -38,7 +42,12 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+   
+    public function biKhoaSortable($query, $direction) {
+        return $query->orderByRaw("if (bi_khoa = 1, 'Bị khóa', 'Không khóa') {$direction}");
+    }
+    public function vai_tro()
+    {
+        return $this->belongsToMany(vai_tro::class);
+    }
 }

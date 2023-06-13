@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\API\group_usercontroller;
+use App\Http\Controllers\API\groupcontroller;
+use App\Http\Controllers\API\noticecontroller;
+use App\Http\Controllers\API\noticeforusercontroller;
+use App\Http\Controllers\API\usercontroller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +19,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+Route::get('user',[usercontroller::class,'index']);
+
+Route::get('group',[groupcontroller::class,'index']);
+
+Route::get('groupuser',[group_usercontroller::class,'index']);
+
+Route::get('noticeuser',[noticeforusercontroller::class,'index']);
+
+Route::get('notice',[noticecontroller::class,'index']);

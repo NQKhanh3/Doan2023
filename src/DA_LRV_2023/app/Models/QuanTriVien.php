@@ -17,7 +17,6 @@ class QuanTriVien extends Authenticatable
         'ten',
         'email',
         'sdt',
-        'vai_tro_id',
         'bi_khoa'
     ];
     protected $hidden = ['mat_khau'];
@@ -27,10 +26,6 @@ class QuanTriVien extends Authenticatable
         return $this->mat_khau; 
     }
 
-    public function vai_tro()
-    {
-        return $this->hasOne(VaiTro::class, 'id', 'vai_tro_id');
-    }
 
     public function biKhoaSortable($query, $direction) {
         return $query->orderByRaw("if (bi_khoa = 1, 'Bị khóa', 'Không khóa') {$direction}");

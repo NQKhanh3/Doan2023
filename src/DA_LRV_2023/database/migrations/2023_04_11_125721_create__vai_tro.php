@@ -13,7 +13,7 @@ class CreateVaiTro extends Migration
      */
     public function up()
     {
-        Schema::create('vai_tro', function (Blueprint $table) {
+        Schema::create('Role', function (Blueprint $table) {
             $table->increments('id');
             $table->string('ten', 50);
             $table->timestamps();
@@ -27,6 +27,6 @@ class CreateVaiTro extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vai_tro');
+        Schema::dropIfExists('Role');
     }
 }
