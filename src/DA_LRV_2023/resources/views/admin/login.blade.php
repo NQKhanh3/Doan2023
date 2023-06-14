@@ -28,7 +28,7 @@
         <!-- Begin page -->
         <div class="accountbg">
             <div class="text-left font-20 text-white pl-5 pt-4">
-                <p>Website quản lý bán balo, túi xách</p>
+                <p>Website quản lý App thông báo</p>
             </div>
         </div>
         <div class="wrapper-page">
