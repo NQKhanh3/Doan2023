@@ -16,7 +16,7 @@ class CreateUser extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('username', 30);
-            $table->string('mat_khau');
+            $table->string('password');
             $table->string('email', 30)->nullable();
             $table->string('hinh_dai_dien')->nullable();
             $table->string('google_id',30)->nullable();
