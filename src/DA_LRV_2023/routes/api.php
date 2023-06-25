@@ -19,20 +19,45 @@ use App\Http\Controllers\API\AuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+// API Route USER
 Route::get('user',[usercontroller::class,'index']);
 
-Route::post('user',[usercontroller::class,'store']);
+// Route::post('user',[usercontroller::class,'store']);
 
-Route::put('user',[usercontroller::class,'update']);
+Route::put('user/{id}',[usercontroller::class,'update']);
 
-Route::delete('user',[usercontroller::class,'destroy']);
+Route::delete('user/{id}',[usercontroller::class,'destroy']);
+
+// API Route Group
 
 Route::get('group',[groupcontroller::class,'index']);
 
+Route::get('group/{id}',[groupcontroller::class,'show']);
+
+Route::post('group',[groupcontroller::class,'store']);
+
+Route::put('group/{id}',[groupcontroller::class,'update']);
+
+Route::delete('group/{id}',[groupcontroller::class,'destroy']);
+
+
+// API ROUTE GROUP USER
+
 Route::get('groupuser',[group_usercontroller::class,'index']);
 
+Route::get('groupuser/{id}',[group_usercontroller::class,'show']);
+
+Route::post('groupuser',[group_usercontroller::class,'store']);
+
+Route::put('groupuser/{id}',[group_usercontroller::class,'update']);
+
+Route::delete('groupuser/{id}',[group_usercontroller::class,'destroy']);
+
+// API NOTICE USER
+
 Route::get('noticeuser',[noticeforusercontroller::class,'index']);
+
+// API NOTICE
 
 Route::get('notice',[noticecontroller::class,'index']);
 

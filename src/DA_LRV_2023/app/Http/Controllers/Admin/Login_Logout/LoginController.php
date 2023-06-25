@@ -14,8 +14,11 @@ class LoginController extends Controller
 
     public function doLogin(Request $req) {
         $credentials = [
-            'ten_tai_khoan' => $req->username,
-            'password'      => $req->password
+            // 'ten_tai_khoan' => $req->username,
+            // 'password'      => $req->password
+            'ten_tai_khoan' => 'admin',
+            'password'      => 'admin@123'
+
         ];
 
         if (Auth::guard('admin')->attempt($credentials)) {

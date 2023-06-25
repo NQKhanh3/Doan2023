@@ -25,7 +25,7 @@ class QuanTriVienController extends Controller
             'ten'           => $req->ten,
             'email'         => $req->email,
             'sdt'           => $req->sdt,
-            'vai_tro_id'    => $req->vai_tro_id,
+            // 'vai_tro_id'    => $req->vai_tro_id,
             'bi_khoa'       => $req->bi_khoa
         ];
 
@@ -52,9 +52,9 @@ class QuanTriVienController extends Controller
             $admins->where('sdt', $req->sdt);
         }
 
-        if (!empty($req->vai_tro_id)) {
-            $admins->where('vai_tro_id', $req->vai_tro_id);
-        }
+        // if (!empty($req->vai_tro_id)) {
+        //     $admins->where('vai_tro_id', $req->vai_tro_id);
+        // }
 
         if (isset($req->bi_khoa)) {
             $admins->where('bi_khoa', $req->bi_khoa);
