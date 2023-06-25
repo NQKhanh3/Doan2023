@@ -12,6 +12,7 @@ class group_user extends Model
     protected $fillable = [
         'id_group',
         'id_user',
-        'ten'
+        'vai_tro'
+        //biet danh
     ];
 }

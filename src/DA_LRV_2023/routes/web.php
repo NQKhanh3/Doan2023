@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\abc;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HoadonController;
 use App\Http\Controllers\Admin\KhachHangController;
@@ -9,7 +10,9 @@ use App\Http\Controllers\Admin\Login_Logout\LogoutController;
 use App\Http\Controllers\Admin\NhaSanXuatController;
 use App\Http\Controllers\Admin\QuanTriVienController;
 use App\Http\Controllers\Admin\SanPhamController;
+use App\Http\Controllers\Admin\UserController_admin;
 use App\Http\Controllers\Admin\VaiTroController;
+use App\Http\Controllers\API\usercontroller;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -121,6 +124,17 @@ Route::group(['middleware' => 'auth:admin'], function() {
                 Route::delete('xoa', [HoadonController::class,'destroy'] )->name('delete');           
                 Route::get('thong-ke', [HoadonController::class,'statistic'] )->name('statistic');
                 Route::get('xuat-excel',[HoadonController::class,'excel'] )->name('excel');
+            });
+        });
+
+        Route::prefix('admin/User')->group(function() {
+            Route::name('User.')->group(function() {
+                Route::get('', [UserController_admin::class,'index'] )->name('list');
+                Route::get('them-moi',[UserController_admin::class,'create'])->name('create');
+                Route::post('them-moi',[UserController_admin::class,'store'])->name('store');
+                Route::delete('xoa', [UserController_admin::class,'destroy'])->name('delete');
+                Route::get('cap-nhat/{id}', [UserController_admin::class,'edit'])->name('edit');
+                Route::post('cap-nhat/{id}',[UserController_admin::class,'update'])->name('update');
             });
         });
 
