@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\abc;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GroupController_admin;
 use App\Http\Controllers\Admin\HoadonController;
 use App\Http\Controllers\Admin\KhachHangController;
 use App\Http\Controllers\Admin\LoaiSPController;
@@ -129,12 +130,19 @@ Route::group(['middleware' => 'auth:admin'], function() {
 
         Route::prefix('admin/User')->group(function() {
             Route::name('User.')->group(function() {
-                Route::get('', [UserController_admin::class,'index'] )->name('list');
-                Route::get('them-moi',[UserController_admin::class,'create'])->name('create');
-                Route::post('them-moi',[UserController_admin::class,'store'])->name('store');
-                Route::delete('xoa', [UserController_admin::class,'destroy'])->name('delete');
-                Route::get('cap-nhat/{id}', [UserController_admin::class,'edit'])->name('edit');
-                Route::post('cap-nhat/{id}',[UserController_admin::class,'update'])->name('update');
+                Route::get('',  [UserController_admin::class,'index'])->name('list');
+                Route::delete('xoa',  [UserController_admin::class,'destroy'])->name('delete');
+                Route::post('doi-mat-khau',  [UserController_admin::class,'changePass'])->name('change-pass');
+                Route::post('khoa-hoac-mo-khoa',  [UserController_admin::class,'lockOrUnlockUser'])->name('lock');
+            });
+        });
+
+        Route::prefix('admin/Group')->group(function() {
+            Route::name('Group.')->group(function() {
+                Route::get('',  [GroupController_admin::class,'index'])->name('list');
+                Route::delete('xoa',  [GroupController_admin::class,'destroy'])->name('delete');
+                // Route::post('doi-mat-khau',  [UserController_admin::class,'changePass'])->name('change-pass');
+                // Route::post('khoa-hoac-mo-khoa',  [UserController_admin::class,'lockOrUnlockUser'])->name('lock');
             });
         });
 
