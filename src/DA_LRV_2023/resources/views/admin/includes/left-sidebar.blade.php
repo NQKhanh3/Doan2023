@@ -58,7 +58,7 @@
                     </li>
                 @endif
 
-                <li>
+                <!-- <li>
                     <a href="{{ route('nha-san-xuat.list') }}" class="waves-effect @if($page == 'nhà sản xuất') mm-active @endif">
                        <i class="fas fa-portrait"></i>
                         <span>nhà sản xuất</span>
@@ -83,12 +83,19 @@
                         <i class="fas	fa-file-alt"></i>
                         <span>Danh sách thông báo</span>
                     </a>
-                </li>
+                </li> -->
 
                 <li>
                     <a href="{{ route('User.list') }}" class="waves-effect @if($page == 'user') mm-active @endif">
                        <i class="fas fa-portrait"></i>
                         <span>User</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('Group.list') }}" class="waves-effect @if($page == 'group') mm-active @endif">
+                       <i class="fas fa-boxes"></i>
+                        <span>Group</span>
                     </a>
                 </li>
 

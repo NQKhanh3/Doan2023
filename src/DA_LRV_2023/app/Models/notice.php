@@ -15,6 +15,7 @@ class notice extends Model
         'noi_dung',
         'mau_sac',
         'ngay_bat_dau',
+        //ngay
         'lap_lai',
         'ngay_ket_thuc'
     ];
