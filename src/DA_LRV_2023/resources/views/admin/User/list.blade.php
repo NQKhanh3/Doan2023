@@ -24,8 +24,8 @@
                                     <label>Tình trạng</label>
                                     <select class="form-control" id="bi_khoa" name="bi_khoa">
                                         <option selected disabled>Chọn tình trạng</option>
-                                        <option @if ($inputSearch['bi_khoa'] == '0') selected @endif value="0">Không khóa</option>
-                                        <option @if ($inputSearch['bi_khoa'] == 1) selected @endif value="1">Bị khóa</option>
+                                        <option @if ($inputSearch['bi_khoa'] == '1') selected @endif value="0">Không khóa</option>
+                                        <option @if ($inputSearch['bi_khoa'] == 0) selected @endif value="1">Bị khóa</option>
                                     </select>
                                 </div>
                             </div>

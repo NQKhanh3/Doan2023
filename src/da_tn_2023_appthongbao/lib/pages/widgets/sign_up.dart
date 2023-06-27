@@ -1,7 +1,9 @@
+import 'package:da_tn_2023_appthongbao/controllers/db_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:da_tn_2023_appthongbao/theme.dart';
 import 'package:da_tn_2023_appthongbao/widgets/snackbar.dart';
+import 'package:get/get.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({ Key? key}) : super(key: key);
@@ -244,7 +246,10 @@ class _SignUpState extends State<SignUp> {
                           fontFamily: 'WorkSansBold'),
                     ),
                   ),
-                  onPressed: () => _toggleSignUpButton(),
+                  onPressed: (){
+                    _checkregister(signupEmailController.text, signupPasswordController.text, signupNameController.text, signupConfirmPasswordController.text);
+
+                  } ,
                 ),
               )
             ],
@@ -253,9 +258,45 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
+void _checkregister(String email,String password,String name,String Confi)async{
 
-  void _toggleSignUpButton() {
+    if (email.isEmpty || password.isEmpty||name.isEmpty) {
+            showDialog<String>(
+              context: context,
+              builder: (BuildContext context) =>
+                  AlertDialog(
+                content:
+                    const Text('email hoặc mật khẩu trống'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Get.back(),
+                    child: const Text('Cancel'),
+                  ),
+                ],
+              ),
+            );
+          }else if(Confi.isEmpty||Confi!=password){
+            CustomSnackBar(context, const Text(' fix Confirmation'),backgroundColor: Colors.red);
+          } else {
+            await NetworkHelper.fetchuser_register(
+                    email, password,name)
+                .then((value) {
+           
+                setState(() {
+                  Get.back();
+                  CustomSnackBar(
+                    context, const Text('register successfull'));
+
+                });
+            });
+         
+          }
+}
+  void _toggleSignUpButton()async {
+
    CustomSnackBar(context, const Text('SignUp button pressed'));
+  
+  
   }
 
   void _toggleSignup() {

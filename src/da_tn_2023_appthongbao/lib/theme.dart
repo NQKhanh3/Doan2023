@@ -47,12 +47,22 @@ TextStyle get colorTileStyle{
     )
   );
 }
-
+TextStyle get groupNameStyle{
+  return GoogleFonts.lato(
+    textStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      color: Colors.white
+      
+    )
+  );
+}
 TextStyle get titleStyle{
   return GoogleFonts.lato(
     textStyle: TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w400
+      
     )
   );
 }

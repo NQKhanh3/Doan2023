@@ -13,47 +13,50 @@ class _listUserState extends State<listUser> {
   Widget build(BuildContext context) {
     return Scaffold(
     appBar: _appBar(),
-    body: Column(
-      children: [
-        ListView(
-          children: [
-            
-           Row(
-             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
-                  
-                ),
-                  child: ListTile(
-                    
-                    title:  Row(
-                      children: [
-                        CircleAvatar(
-                              child: Text('T'),
-                              backgroundColor: Colors.red,
-                        ),
-                        SizedBox(width: 10,),
-                          Text('username',style: titleStyle,)
-                      ],
+    body: SingleChildScrollView(
+      physics: ScrollPhysics(),
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white,
+                      
                     ),
-                        subtitle: Text('@email'),
-
-                  ),
+                      child: ListTile(
+                        
+                        title:  Row(
+                          children: [
+                            ListTile(
+                              leading:   CircleAvatar(
+                                  child: Text('T'),
+                                  backgroundColor: Colors.red,
+                            ),
+                            title:  Text('username',style: titleStyle,),
+                             subtitle: Text('@email'),
+                            ),
                 
-                ),
-              ),
-
-             ],
-           
-           ),
-          ],
-        )
-      ],
+                          ],
+                        ),
+              
+                      ),
+                    
+                    ),
+                  ),
+              
+                 ],
+               
+               ),
+          ),
+            ],
+        
+      ),
     ),
     );
   }

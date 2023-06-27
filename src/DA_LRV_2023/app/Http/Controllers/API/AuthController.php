@@ -63,12 +63,12 @@ class AuthController extends Controller
         // // } else {
         // //     $usersession = $checktoken;
         // // }
-        return response()->json(['message' => 'Chào '.$user->username.'! Chúc an lành']);
+        return response()->json(['code'=>200,'message' => 'Chào '.$user->username.'! Chúc an lành'],200);
         } 
         else{
             return response()->json([
             'code'=>401,
-        'message'=>'Email hoặc Password sai! Vui lòng nhập lại',
+            'message'=>'Email hoặc Password sai! Vui lòng nhập lại',
         ],401
         );
         }

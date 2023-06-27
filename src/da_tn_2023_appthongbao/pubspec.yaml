@@ -36,6 +36,8 @@ flutter:
 
   assets:
     - assets/img/
+    - assets/img/background2.png
+    - assets/img/background.png
  
   fonts:
     - family: WorkSansSemiBold

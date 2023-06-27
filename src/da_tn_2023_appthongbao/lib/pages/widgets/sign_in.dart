@@ -1,3 +1,4 @@
+import 'package:da_tn_2023_appthongbao/controllers/db_controller.dart';
 import 'package:da_tn_2023_appthongbao/ui/noctification_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -163,30 +164,13 @@ class _SignInState extends State<SignIn> {
                     ),
                   ),
                   onPressed: () {
-                    Get.toNamed(
-                  '/home',
+                   _checklogin(loginEmailController.text, loginPasswordController.text);
                    
-                  );
-                    CustomSnackBar(
-                      context, const Text('Login button pressed'));
-                
                   } ),
               )
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'Forgot Password?',
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.white,
-                      fontSize: 16.0,
-                      fontFamily: 'WorkSansMedium'),
-                )),
-          ),
+       
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
             child: Row(
@@ -289,5 +273,38 @@ class _SignInState extends State<SignIn> {
     setState(() {
       _obscureTextPassword = !_obscureTextPassword;
     });
+  }
+  _checklogin(String email,String password)async{
+     if (email.isEmpty || password.isEmpty) {
+            showDialog<String>(
+              context: context,
+              builder: (BuildContext context) =>
+                  AlertDialog(
+                content:
+                    const Text('email hoặc mật khẩu trống'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Get.back(),
+                    child: const Text('Cancel'),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            await NetworkHelper.fetchuser_login(
+                    email.toString(), password.toString())
+                .then((value) {
+            
+                setState(() {
+                  Get.toNamed('/home');
+                  CustomSnackBar(
+                    context, const Text('Login succufull'));
+
+                });
+            });
+           
+          }
+
+
   }
 }

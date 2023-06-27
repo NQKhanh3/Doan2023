@@ -27,12 +27,12 @@ class _noctificatonState extends State<noctificaton> {
   DateTime _selectedDate =DateTime.now();
   final _taskController =Get.put(TaskController());
   
-  var notifyhelper;
+ 
   @override
  void initState() {
     // TODO: implement initState
     super.initState();
-    notifyhelper=NotifyHelper();
+   var notifyhelper=NotifyHelper();
     
   
    
@@ -100,7 +100,8 @@ class _noctificatonState extends State<noctificaton> {
               onTap: () async {
                 // Update the state of the app
                 // ...
-                Get.to( listUser());
+                print(DateFormat.yMd().format(_selectedDate));
+                Get.back();
               },
             ),
         
@@ -148,25 +149,7 @@ class _noctificatonState extends State<noctificaton> {
           itemBuilder: (_,index){
             Task task=_taskController.tasksList[index];
             print(task.toJson());
-            if( task.repeat=="none"){
-               return AnimationConfiguration.staggeredList(
-            position: index, 
-            child: SlideAnimation(
-              child:FadeInAnimation(
-                child: Row(children: [
-                  GestureDetector(
-                    onTap: (){
-                      _showBottomSheet(context,task);
-                   },
-                    child: TaskTile(task),
-                )
-                ]
-                )
-               ,)
-             )
-             );
-          
-            }
+         
             if(task.date==DateFormat.yMd().format(_selectedDate)){
               return AnimationConfiguration.staggeredList(
             position: index, 
@@ -175,6 +158,7 @@ class _noctificatonState extends State<noctificaton> {
                 child: Row(children: [
                   GestureDetector(
                     onTap: () {
+                      
                       _showBottomSheet(context,task);
                     },
                     child: TaskTile(task),
@@ -294,6 +278,7 @@ class _noctificatonState extends State<noctificaton> {
           Builder(builder: (context) => 
             IconButton(
             onPressed:() {
+              print(DateFormat.yMd().format(_selectedDate));
           Scaffold.of(context).openEndDrawer();
         },  icon:  Icon(Icons.person, size: 20,
         ),
