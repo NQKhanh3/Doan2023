@@ -24,6 +24,8 @@ Route::get('user',[usercontroller::class,'index']);
 
 // Route::post('user',[usercontroller::class,'store']);
 
+Route::get('user/{id}',[usercontroller::class,'show']);
+
 Route::put('user/{id}',[usercontroller::class,'update']);
 
 Route::delete('user/{id}',[usercontroller::class,'destroy']);
@@ -60,6 +62,14 @@ Route::get('noticeuser',[noticeforusercontroller::class,'index']);
 // API NOTICE
 
 Route::get('notice',[noticecontroller::class,'index']);
+
+Route::get('notice/{id}',[noticecontroller::class,'show']);
+
+Route::post('notice',[noticecontroller::class,'store']);
+
+Route::put('notice/{id}',[noticecontroller::class,'update']);
+
+Route::delete('notice/{id}',[noticecontroller::class,'destroy']);
 
 //API route để đăng ký
 Route::post('/register', [AuthController::class, 'register']);

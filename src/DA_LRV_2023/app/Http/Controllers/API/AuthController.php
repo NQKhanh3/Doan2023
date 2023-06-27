@@ -25,7 +25,8 @@ class AuthController extends Controller
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'bi_khoa' => '0'
          ]);
          $token = $user->createToken('auth_token')->plainTextToken;
          return response()->json(
@@ -68,7 +69,7 @@ class AuthController extends Controller
         else{
             return response()->json([
             'code'=>401,
-        'message'=>'Email hoặc Password sai! Vui lòng nhập lại',
+        'message'=>'Email hoặc Password sai hoặc tài khoản đã bị khóa! Vui lòng nhập lại',
         ],401
         );
         }

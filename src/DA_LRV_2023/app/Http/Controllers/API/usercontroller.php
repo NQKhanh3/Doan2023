@@ -71,7 +71,19 @@ class usercontroller extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::find($id);
+        if($user){
+            return response()->json([
+                'status' => 200,
+                "group" => $user
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'status' => 404,
+                "message" => "Không tìm thấy group"
+            ], 404);
+        }
     }
 
     /**

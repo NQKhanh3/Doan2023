@@ -2,25 +2,29 @@
 @section('main-content')
 <div class="row">
     <div class="col-12">
-        <form id="search" action="{{ route('group.list') }}" method="GET">
+        <form id="search" action="{{ route('groupuser.list') }}" method="GET">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card m-b-30">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-3 form-group">
-                                    <label>Id leader</label>
-                                    <input type="text" id="id_leader" name="id_leader" class="form-control" @if (!empty($inputSearch['id_leader'])) value="{{ $inputSearch['id_leader'] }}" @endif maxlength="50">
+                                    <label>Id group</label>
+                                    <input type="text" id="id_group" name="id_group" class="form-control" @if (!empty($inputSearch['id_group'])) value="{{ $inputSearch['id_group'] }}" @endif maxlength="50">
                                 </div>
                                 <div class="col-3 form-group">
-                                    <label>Name</label>
-                                    <input type="text" id="name" name="name" class="form-control" @if (!empty($inputSearch['name'])) value="{{ $inputSearch['name'] }}" @endif maxlength="30">
+                                    <label>Id user</label>
+                                    <input type="text" id="id_user" name="id_user" class="form-control" @if (!empty($inputSearch['id_user'])) value="{{ $inputSearch['id_user'] }}" @endif maxlength="30">
+                                </div>
+                                <div class="col-3 form-group">
+                                    <label>Vai trò</label>
+                                    <input type="text" id="vai_tro" name="vai_tro" class="form-control" @if (!empty($inputSearch['vai_tro'])) value="{{ $inputSearch['vai_tro'] }}" @endif maxlength="30">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12">
                                     <div class="d-flex justify-content-end">
-                                        <a href="{{ route('group.list') }}" class="mr-1 btn btn-secondary waves-effect waves-light"><i class="fas fa-redo-alt"></i> Làm mới</a>
+                                        <a href="{{ route('groupuser.list') }}" class="mr-1 btn btn-secondary waves-effect waves-light"><i class="fas fa-redo-alt"></i> Làm mới</a>
                                         <button type="submit" class="btn btn-info waves-effect waves-light">
                                             <i class="fas fa-search"></i> Tìm kiếm
                                         </button>
@@ -38,20 +42,22 @@
                     <table class="table">
                         <thead class="thead-default">
                             <tr>
-                                <th scope="col">@sortablelink('id_leader', 'id leader', '', ['style' => 'color: black'])</th>
-                                <th scope="col">@sortablelink('name', 'Name', '', ['style' => 'color: black'])</th>
+                                <th scope="col">@sortablelink('idgroup', 'id group', '', ['style' => 'color: black'])</th>
+                                <th scope="col">@sortablelink('id_user', 'id user', '', ['style' => 'color: black'])</th>
+                                <th scope="col">@sortablelink('vai_tro', 'vai tro', '', ['style' => 'color: black'])</th>
                                 <th scope="col">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (count($group) > 0)
-                                @foreach ($group as $group)
+                            @if (count($groupuser) > 0)
+                                @foreach ($groupuser as $groupuser)
                                 <tr>
-                                    <td>{{ $group->id_leader }}</td>
-                                    <td>{{ $group->name }}</td>
+                                    <td>{{ $groupuser->id_group }}</td>
+                                    <td>{{ $groupuser->id_user }}</td>
+                                    <td>{{ $groupuser->vai_tro }}</td>
                                     <td>
                                         <div>
-                                            <a href="javascript:void(0);" class="btn btn-secondary btn-sm waves-effect waves-light btn-delete" data-id="{{ $group->id }}" data-title="{{ $group->id_leader }}" data-toggle="tooltip" data-placement="top" title="Xóa"><i class="fas fa-trash"></i></a>
+                                            <a href="javascript:void(0);" class="btn btn-secondary btn-sm waves-effect waves-light btn-delete" data-id="{{ $groupuser->id }}" data-title="{{ $groupuser->id_group }}" data-toggle="tooltip" data-placement="top" title="Xóa"><i class="fas fa-trash"></i></a>
                                         </div>
                                     </td>
                                 </tr>
@@ -66,21 +72,21 @@
                         </tbody>
                     </table>
                 </div>
-                @if (isset($groups))
+                @if (isset($groupusers))
                 <div class="d-flex justify-content-between mt-3">
                     <div style="padding: .5rem .75rem; margin-bottom: 1rem;">
-                        Hiển thị @if ($groups->firstItem())
-                            {{ $groups->firstItem() }}
+                        Hiển thị @if ($groupusers->firstItem())
+                            {{ $groupusers->firstItem() }}
                         @else
                             0
-                        @endif tới @if ($groups->lastItem())
-                            {{ $groups->lastItem() }}
+                        @endif tới @if ($groupusers->lastItem())
+                            {{ $groupusers->lastItem() }}
                         @else
                             0
-                        @endif trong {{ $groups->total() }} mục
+                        @endif trong {{ $groupusers->total() }} mục
                     </div>
                     <div>
-                        {{ $groups->onEachSide(1)->withQueryString()->links() }}
+                        {{ $groupusers->onEachSide(1)->withQueryString()->links() }}
                     </div>
                 </div>
                 @endif
@@ -104,10 +110,10 @@
 @section('page-js')
 @endsection
 
-@section('page-group-js')
+@section('page-groupuser-js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#id_leader').focus();
+        $('#id_group').focus();
 
         $('.btn-delete').click(function() {
             var mId = $(this).data("id");
@@ -130,7 +136,7 @@
                         });
 
                         $.ajax({
-                            url : "{!! route('group.delete') !!}",
+                            url : "{!! route('groupuser.delete') !!}",
                             type: "DELETE",
                             data: { id : mId }
                         }).done(function (response) {
