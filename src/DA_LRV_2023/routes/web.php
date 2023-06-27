@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\abc;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GroupController_admin;
 use App\Http\Controllers\Admin\HoadonController;
 use App\Http\Controllers\Admin\KhachHangController;
 use App\Http\Controllers\Admin\LoaiSPController;
@@ -9,7 +11,9 @@ use App\Http\Controllers\Admin\Login_Logout\LogoutController;
 use App\Http\Controllers\Admin\NhaSanXuatController;
 use App\Http\Controllers\Admin\QuanTriVienController;
 use App\Http\Controllers\Admin\SanPhamController;
+use App\Http\Controllers\Admin\UserController_admin;
 use App\Http\Controllers\Admin\VaiTroController;
+use App\Http\Controllers\API\usercontroller;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -121,6 +125,24 @@ Route::group(['middleware' => 'auth:admin'], function() {
                 Route::delete('xoa', [HoadonController::class,'destroy'] )->name('delete');           
                 Route::get('thong-ke', [HoadonController::class,'statistic'] )->name('statistic');
                 Route::get('xuat-excel',[HoadonController::class,'excel'] )->name('excel');
+            });
+        });
+
+        Route::prefix('admin/User')->group(function() {
+            Route::name('User.')->group(function() {
+                Route::get('',  [UserController_admin::class,'index'])->name('list');
+                Route::delete('xoa',  [UserController_admin::class,'destroy'])->name('delete');
+                Route::post('doi-mat-khau',  [UserController_admin::class,'changePass'])->name('change-pass');
+                Route::post('khoa-hoac-mo-khoa',  [UserController_admin::class,'lockOrUnlockUser'])->name('lock');
+            });
+        });
+
+        Route::prefix('admin/Group')->group(function() {
+            Route::name('Group.')->group(function() {
+                Route::get('',  [GroupController_admin::class,'index'])->name('list');
+                Route::delete('xoa',  [GroupController_admin::class,'destroy'])->name('delete');
+                // Route::post('doi-mat-khau',  [UserController_admin::class,'changePass'])->name('change-pass');
+                // Route::post('khoa-hoac-mo-khoa',  [UserController_admin::class,'lockOrUnlockUser'])->name('lock');
             });
         });
 

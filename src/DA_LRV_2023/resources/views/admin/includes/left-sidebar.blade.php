@@ -58,30 +58,44 @@
                     </li>
                 @endif
 
-                <li>
-                    <a href="{{ route('nha-san-xuat.list') }}" class="waves-effect @if($page == 'Nhà sản xuất') mm-active @endif">
+                <!-- <li>
+                    <a href="{{ route('nha-san-xuat.list') }}" class="waves-effect @if($page == 'nhà sản xuất') mm-active @endif">
                        <i class="fas fa-portrait"></i>
-                        <span>Nhà sản xuất</span>
+                        <span>nhà sản xuất</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('loai-san-pham.list') }}" class="waves-effect @if($page == 'Loại sản phẩm') mm-active @endif">
                        <i class="fas fa-boxes"></i>
-                        <span>Loại sản phẩm</span>
+                        <span>Group</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('san-pham.list') }}" class="waves-effect @if($page == 'Sản phẩm') mm-active @endif">
                        <i class="fas fa-box"></i>
-                        <span>Sản phẩm</span>
+                        <span>Group User</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('Hoa-don.list') }}" class="waves-effect @if($page == 'Hóa đơn') mm-active @endif">
                         <i class="fas	fa-file-alt"></i>
-                        <span>Hóa đơn</span>
+                        <span>Danh sách thông báo</span>
+                    </a>
+                </li> -->
+
+                <li>
+                    <a href="{{ route('User.list') }}" class="waves-effect @if($page == 'user') mm-active @endif">
+                       <i class="fas fa-portrait"></i>
+                        <span>User</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('Group.list') }}" class="waves-effect @if($page == 'group') mm-active @endif">
+                       <i class="fas fa-boxes"></i>
+                        <span>Group</span>
                     </a>
                 </li>
 

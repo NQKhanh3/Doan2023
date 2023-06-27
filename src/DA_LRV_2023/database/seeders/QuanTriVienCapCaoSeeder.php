@@ -21,10 +21,14 @@ class QuanTriVienCapCaoSeeder extends Seeder
         Schema::enableForeignKeyConstraints();
 
         QuanTriVien::firstOrCreate(
-            ['ten_tai_khoan' => 'super_admin'],
+            ['ten_tai_khoan' => 'admin'],
             [
                 'mat_khau'      => Hash::make('admin@123'),
+<<<<<<< HEAD
               
+=======
+                // 'vai_tro_id'    => 1,
+>>>>>>> 917a2dfe3211290adb398a3205f7ec2b6d2375ac
                 'ten'           => 'Quản trị viên'
             ]
         );

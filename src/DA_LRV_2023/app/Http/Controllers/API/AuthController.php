@@ -68,7 +68,7 @@ class AuthController extends Controller
         else{
             return response()->json([
             'code'=>401,
-        'message'=>'khong the dang nhap',
+        'message'=>'Email hoặc Password sai! Vui lòng nhập lại',
         ],401
         );
         }

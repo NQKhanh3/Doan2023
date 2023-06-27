@@ -115,19 +115,21 @@ class usercontroller extends Controller
         if(!empty($user)){
             
             $user->username  = $request->username;
+            $user->hinh_dai_dien  = $request->hinh_dai_dien;
+            $user->google_id  = $request->google_id;
             $image =$request->file('image');
             if($request ->hasFile('image')){
                 $new =rand().'.'.$image->getClientOriginalExtension();
                 $image->move(public_path('uploads/images'),$new);
                 
             };
-            $user->hinh_dai_dien = 'http://10.0.2.2:8000/uploads/images/'.$new;
+            // $user->hinh_dai_dien = 'http://10.0.2.2:8000/uploads/images/'.$new;
             $user->save(); 
             return response()->json(['user'=>$user], 200);
         }
         return response()->json([
             
-        'mess'=>"lỗi ",
+        'mess'=>"Email không tồn tại",
         ],400);
 
     }
@@ -138,15 +140,21 @@ class usercontroller extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {  
-        
-        // $user->delete();
-        // $arr = [
-        //     'status' => true,
-        //     'message' =>'Sản phẩm đã được xóa',
-        //     'data' => [],
-        // ];
-        // return response()->json($arr, 200);
+        $user = User::find($id);
+         if ($user){
+                $user->delete();
+                return response()->json([
+                    'status' => 200,
+                    "message" => "Delete user thành công"
+                ], 200);
+            }
+            else{
+                return response()->json([
+                    'status' => 500,
+                    "message" => "user không tồn tại"
+                ], 500);
+            }
     }
 }

@@ -46,7 +46,7 @@
                 </div>
 
                 <footer class="footer">
-                    © 2021 Quản lý bán balo, túi xách <span class="d-none d-sm-inline-block">
+                    © 2023 Quản lý App thông báo <span class="d-none d-sm-inline-block">
                 </footer>
 
             </div>
