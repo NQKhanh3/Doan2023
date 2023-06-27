@@ -27,5 +27,9 @@ class VaiTroSeeder extends Seeder
         VaiTro::firstOrCreate([
             'ten' => 'Khách hàng'
         ]);
+
+        // VaiTro::firstOrCreate([
+        //     'ten' => 'User'
+        // ]);
     }
 }

@@ -74,7 +74,9 @@
                 language: 'en-CA'
             });
         </script>
-        @yield('page-custom-js')
+        @yield('page-user-js')
+        @yield('page-group-js')
+        @yield('page-groupuser-js')
     </body>
 
 </html>

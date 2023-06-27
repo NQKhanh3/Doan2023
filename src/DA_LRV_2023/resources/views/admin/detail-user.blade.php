@@ -51,7 +51,7 @@
 <script src="{{ asset('plugins/parsleyjs/parsley.min.js') }}"></script>
 @endsection
 
-@section('page-custom-js')
+@section('page-user-js')
 <script type="text/javascript">
     $(document).ready(function() {
         $('form').parsley();

@@ -3,12 +3,14 @@
 use App\Http\Controllers\Admin\abc;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GroupController_admin;
+use App\Http\Controllers\Admin\GroupUserController_admin;
 use App\Http\Controllers\Admin\HoadonController;
 use App\Http\Controllers\Admin\KhachHangController;
 use App\Http\Controllers\Admin\LoaiSPController;
 use App\Http\Controllers\Admin\Login_Logout\LoginController;
 use App\Http\Controllers\Admin\Login_Logout\LogoutController;
 use App\Http\Controllers\Admin\NhaSanXuatController;
+use App\Http\Controllers\Admin\NoticeController_admin;
 use App\Http\Controllers\Admin\QuanTriVienController;
 use App\Http\Controllers\Admin\SanPhamController;
 use App\Http\Controllers\Admin\UserController_admin;
@@ -128,8 +130,8 @@ Route::group(['middleware' => 'auth:admin'], function() {
             });
         });
 
-        Route::prefix('admin/User')->group(function() {
-            Route::name('User.')->group(function() {
+        Route::prefix('admin/user')->group(function() {
+            Route::name('user.')->group(function() {
                 Route::get('',  [UserController_admin::class,'index'])->name('list');
                 Route::delete('xoa',  [UserController_admin::class,'destroy'])->name('delete');
                 Route::post('doi-mat-khau',  [UserController_admin::class,'changePass'])->name('change-pass');
@@ -137,12 +139,24 @@ Route::group(['middleware' => 'auth:admin'], function() {
             });
         });
 
-        Route::prefix('admin/Group')->group(function() {
-            Route::name('Group.')->group(function() {
+        Route::prefix('admin/group')->group(function() {
+            Route::name('group.')->group(function() {
                 Route::get('',  [GroupController_admin::class,'index'])->name('list');
                 Route::delete('xoa',  [GroupController_admin::class,'destroy'])->name('delete');
-                // Route::post('doi-mat-khau',  [UserController_admin::class,'changePass'])->name('change-pass');
-                // Route::post('khoa-hoac-mo-khoa',  [UserController_admin::class,'lockOrUnlockUser'])->name('lock');
+            });
+        });
+
+        Route::prefix('admin/groupuser')->group(function() {
+            Route::name('groupuser.')->group(function() {
+                Route::get('',  [GroupUserController_admin::class,'index'])->name('list');
+                Route::delete('xoa',  [GroupUserController_admin::class,'destroy'])->name('delete');
+            });
+        });
+
+        Route::prefix('admin/notice')->group(function() {
+            Route::name('notice.')->group(function() {
+                Route::get('',  [NoticeController_admin::class,'index'])->name('list');
+                Route::delete('xoa',  [NoticeController_admin::class,'destroy'])->name('delete');
             });
         });
 
