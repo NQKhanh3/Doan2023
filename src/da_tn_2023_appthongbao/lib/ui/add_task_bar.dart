@@ -30,13 +30,13 @@ class _AddtaskpageState extends State<Addtaskpage> {
     20,
   ];
   int _selectedRemind=5;
-  List<String> repeadList=[
+  List<String> repeatList=[
    "none",
    "Daily",
    "Weekly",
    "Monthly",
   ];
-  String _selectedrepead="none";
+  String _selectedrepeat="none";
    int _selectedColor=0;
   @override
   Widget build(BuildContext context) {
@@ -125,7 +125,7 @@ class _AddtaskpageState extends State<Addtaskpage> {
               ),
               MyInputField(
                 title: "Repeat", 
-              hint: "$_selectedrepead",
+              hint: "$_selectedrepeat",
               widget: DropdownButton( 
               icon: Icon(Icons.keyboard_arrow_down,
               color:Colors.grey ,),
@@ -136,11 +136,11 @@ class _AddtaskpageState extends State<Addtaskpage> {
                color: Colors.black,),
               onChanged:  (String? newValue) {
                 setState(() {
-                  _selectedrepead =newValue!;
+                  _selectedrepeat =newValue!;
                 });
                 
               }, 
-              items: repeadList.map<DropdownMenuItem<String>>((String? value){
+              items: repeatList.map<DropdownMenuItem<String>>((String? value){
                 return DropdownMenuItem<String>(
                    value: value,
                   child: Text(value!, 
@@ -192,7 +192,7 @@ class _AddtaskpageState extends State<Addtaskpage> {
         startTime: _startTime,
         endTime: _endTime,
         remind: _selectedRemind,
-        repeat: _selectedrepead,
+        repeat: _selectedrepeat,
         color: _selectedColor,
         isCompleted: 0,
     )

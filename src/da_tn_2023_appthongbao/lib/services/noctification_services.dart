@@ -1,45 +1,47 @@
+import 'package:da_tn_2023_appthongbao/ui/noctification_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
 class NotifyHelper{
-    FlutterLocalNotificationsPlugin
-    flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin(); //
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin=
+  FlutterLocalNotificationsPlugin();
 
-  initializeNotification() async {
-    //tz.initializeTimeZones();
-   // this is for latest iOS settings
-    final DarwinInitializationSettings initializationSettingsIOS =
-    DarwinInitializationSettings(
-        requestSoundPermission: false,
-        requestBadgePermission: false,
-        requestAlertPermission: false,
-       
+  Future<void> initNotifi()async{
+    AndroidInitializationSettings androidInitializationSettings =
+    const AndroidInitializationSettings('app_icon');
+    var initializationSetingIOS=DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestCriticalPermission: true,
+      onDidReceiveLocalNotification: 
+      (int id,String? title,String? body,String? payload)async { 
+      });
+    var initializationSeting= InitializationSettings(
+      android: androidInitializationSettings,iOS: initializationSetingIOS
     );
+    await flutterLocalNotificationsPlugin.initialize(initializationSeting,
+      onDidReceiveNotificationResponse:(NotificationResponse notificationResponse)async{});
+    
+  }
 
- final AndroidInitializationSettings initializationSettingsAndroid =
-     AndroidInitializationSettings('appicon');
-
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-       iOS: initializationSettingsIOS,
-       android:initializationSettingsAndroid,
-    ); 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-       );
+  noctificationDetail(){
+    return const NotificationDetails(
+      android: AndroidNotificationDetails('channelId', 'channelName',
+      importance: Importance.max,
+      icon: 'app_icon',
+      ),
+      iOS: DarwinNotificationDetails()
+    );
   
   }
-  void SendNotification(String title, String body)async{
-    AndroidNotificationDetails androidNotificationDetails=
-    AndroidNotificationDetails(
-      "channelId",
-       "channelName",
-       importance: Importance.max,
-       priority: Priority.high
-    );
-
-    NotificationDetails notificationDetails =NotificationDetails();
-   await flutterLocalNotificationsPlugin.show(0, title, body, notificationDetails);
+  Future ShowNotification({
+    int id=0,String? title,String? body,String? payload
+  })async{
+    return flutterLocalNotificationsPlugin.show(id, title, body, await noctificationDetail());
   }
+
+
+
+ 
 }

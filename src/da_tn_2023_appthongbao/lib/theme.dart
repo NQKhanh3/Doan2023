@@ -38,6 +38,16 @@ TextStyle get headingStyle{
   );
 }
 
+TextStyle get colorTileStyle{
+  return GoogleFonts.lato(
+    textStyle: TextStyle(
+      fontSize: 30,
+      fontWeight: FontWeight.bold,
+      color: Colors.white
+    )
+  );
+}
+
 TextStyle get titleStyle{
   return GoogleFonts.lato(
     textStyle: TextStyle(
@@ -51,6 +61,43 @@ TextStyle get subtitleStyle{
     textStyle: TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w400
+    )
+  );
+}
+TextStyle get subviewerText{
+  return GoogleFonts.lato(
+    textStyle: TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    )
+  );
+}
+
+TextStyle get subTextstyle{
+  return GoogleFonts.lato(
+    textStyle: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w400,
+      color: Colors.grey
+    )
+  );
+}
+TextStyle get subUsernameText{
+  return GoogleFonts.lato(
+    textStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      color: Colors.black54
+    )
+  );
+}
+  TextStyle get substyle{
+  return GoogleFonts.lato(
+    textStyle: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w400,
+      color: Colors.white
     )
   );
 }

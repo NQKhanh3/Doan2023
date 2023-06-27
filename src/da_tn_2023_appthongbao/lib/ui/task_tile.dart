@@ -31,7 +31,7 @@ class TaskTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                new  Text(
-                  task?.title??"",
+                  task!.title??"",
                   style: GoogleFonts.lato(
                     textStyle: TextStyle(
                         fontSize: 16,

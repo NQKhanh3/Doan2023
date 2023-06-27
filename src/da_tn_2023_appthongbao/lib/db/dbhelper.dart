@@ -4,13 +4,13 @@ import 'package:sqflite/sqflite.dart';
 class DBhelper{
   static Database? _db;
   static final int _version=1;
-  static final String _tablename ="task";
+  static final String _tablename ="task1";
   static Future<void>initDb()async{
     if(_db!=null){
       return;
     }
     try{
-      String _path= await getDatabasesPath()+ 'task.db';
+      String _path= await getDatabasesPath()+ 'task1.db';
       _db=await openDatabase(
         _path,
         version: _version,

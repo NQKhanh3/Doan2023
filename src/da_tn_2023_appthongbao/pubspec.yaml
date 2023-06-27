@@ -23,6 +23,7 @@ dependencies:
   intl:
   google_fonts: 
   date_picker_timeline: ^1.2.5
+  http: ^1.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

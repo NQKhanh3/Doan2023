@@ -1,6 +1,8 @@
+import 'package:da_tn_2023_appthongbao/controllers/task_controller.dart';
 import 'package:da_tn_2023_appthongbao/ui/noctification_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../theme.dart';
@@ -14,15 +16,30 @@ class home_page extends StatefulWidget {
 }
 
 class _home_pageState extends State<home_page> {
+  final _taskController =Get.put(TaskController());
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: _appBar(),
       body: Column(
         children: [
-          _apptaskbar()
+          Container(
+                  color: Colors.white,
+                width: MediaQuery.of(context).size.width,
+                height: 150,
+                child: _apptaskbar()
+                ),
+                 Column(
+            children: [ 
+             
+             _showTaskFormgridview()
+            
+            ],)
         ],
       ),
+          
+       
+      
     );
   }
    _appBar(){
@@ -49,13 +66,12 @@ class _home_pageState extends State<home_page> {
                 
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                Text( DateFormat.yMMMd().format(DateTime.now()),
+                Text( 'Groups',
                 style: subHeadingStyle,
                 ),
-                Text("today",
-                style: headingStyle,
-                ),
+
                 
                 ],
               ),
@@ -64,7 +80,7 @@ class _home_pageState extends State<home_page> {
              
                Mybutton(label: '+ Add Group', ontap:() async {
                   await  Get.to(()=>noctificaton());
-                      ;
+
                }
                
                 )
@@ -74,4 +90,72 @@ class _home_pageState extends State<home_page> {
         ,
         );     
   }
+   _getBGClr(int no) {
+    switch (no) {
+      case 0:
+        return CustomTheme.primaryClr;
+      case 1:
+        return CustomTheme.pinkColor;
+      case 2:
+        return CustomTheme.yellowClr;
+      default:
+        return CustomTheme.primaryClr;
+    }
+  }
+   _showTaskFormgridview(){
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.width,
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                childAspectRatio: 3 / 2,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20),
+            
+             padding: const EdgeInsets.all(20),
+            itemCount: 5,
+          
+            itemBuilder:  ( _, index) {
+              
+              return 
+               GestureDetector(
+                    onTap:() async {
+                  await  Get.to(()=>noctificaton());
+                      _taskController.getTasks();
+               },
+                    child:Container(
+                  decoration: BoxDecoration(
+                    color: _getBGClr(0),
+                    borderRadius: BorderRadius.circular(15)),
+                padding: const EdgeInsets.all(8),
+               
+                child:   Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            child: Text('A'),
+                          ),
+                        Text( 'nhom A',style:subHeadingStyle ,),
+                        ],
+                        
+                      ),
+
+                    ),
+                    Text('@ten nhom truong')
+
+
+                     
+              ]))
+                );
+               
+               
+            }),
+    );
+  }
+ 
  }

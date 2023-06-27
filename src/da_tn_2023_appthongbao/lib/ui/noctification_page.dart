@@ -5,6 +5,9 @@ import 'package:da_tn_2023_appthongbao/services/noctification_services.dart';
 import 'package:da_tn_2023_appthongbao/theme.dart';
 import 'package:da_tn_2023_appthongbao/ui/add_task_bar.dart';
 import 'package:da_tn_2023_appthongbao/ui/button.dart';
+import 'package:da_tn_2023_appthongbao/ui/list_user_page.dart';
+import 'package:da_tn_2023_appthongbao/ui/manages_page.dart';
+import 'package:da_tn_2023_appthongbao/ui/detail_noctifi_page.dart';
 import 'package:da_tn_2023_appthongbao/ui/task_tile.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +42,7 @@ class _noctificatonState extends State<noctificaton> {
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: _appBar(),
-      
+      endDrawer: _showDrawer(),
       body: Column(
         children: [
           _apptaskbar(),
@@ -50,6 +53,92 @@ class _noctificatonState extends State<noctificaton> {
           ],
       ),
     );
+  }
+  _showDrawer(){
+    return Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xFFfbab66),
+              ),
+              child: Center(
+                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CircleAvatar(child: Text('T'),),
+                   Text('GroupName',
+                   style: substyle,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _paddingbutton(() => _showdaialoguser(context), 'add users',Icons.person_add,),
+                        _paddingbutton(() => Get.to(()=>ManagesTaskpage()), 'manage',Icons.manage_history,),
+                        _paddingbutton(() => Get.back(), 'out group',Icons.forward_outlined,),
+                    
+                       
+                      ],
+                    )
+                    
+                  ],
+                 ),
+              ),
+            ),
+
+            ListTile(
+              
+              title: Row(children: [
+                  Icon(Icons.person),
+                   Text('Members')
+
+              ],),
+              onTap: () async {
+                // Update the state of the app
+                // ...
+                Get.to( listUser());
+              },
+            ),
+        
+          
+        
+          ],
+        ),
+
+      );
+      
+  }
+  _paddingbutton(
+    Function()?onTap,
+    String text,
+    IconData icons
+    ){
+    return  Padding(padding: EdgeInsets.only(top: 10,),
+                        child:GestureDetector(
+                          onTap: onTap,
+                          child:Column(
+                          children: [
+                           CircleAvatar(
+                            backgroundColor:  Colors.grey,
+                            child: Icon(
+                              icons,
+                              color: Colors.white,
+                              ),
+                           ),
+                           
+                           Text(text,style: TextStyle(
+                            
+                            color: Colors.white
+                           ),)
+                          ],
+
+                        ),
+                        )
+                       ,);
   }
   _ShowTasks(){     
     return Expanded(
@@ -66,7 +155,7 @@ class _noctificatonState extends State<noctificaton> {
               child:FadeInAnimation(
                 child: Row(children: [
                   GestureDetector(
-                    onTap: () {
+                    onTap: (){
                       _showBottomSheet(context,task);
                    },
                     child: TaskTile(task),
@@ -175,6 +264,7 @@ class _noctificatonState extends State<noctificaton> {
                Mybutton(label: 'Add Task', ontap:() async {
                   await  Get.to(()=>Addtaskpage());
                       _taskController.getTasks();
+                       NotifyHelper().ShowNotification(title: "hello",body: 'welcome');
                }
                
                 )
@@ -190,15 +280,26 @@ class _noctificatonState extends State<noctificaton> {
        backgroundColor: Color(0xFFfbab66),
         leading: GestureDetector(
           onTap: (){
-              Get.toNamed("/");
+              Get.back();
             _taskController.getTasks();
+           
           },
           child: Icon(Icons.arrow_back,
           size: 20,
           
           ),
         ),
-        actions: [ Icon(Icons.person, size: 20,),
+        title: Text('Group Name'),
+        actions: [ 
+          Builder(builder: (context) => 
+            IconButton(
+            onPressed:() {
+          Scaffold.of(context).openEndDrawer();
+        },  icon:  Icon(Icons.person, size: 20,
+        ),
+        ),
+          ),
+        
         SizedBox(width: 20,)
 ],
     );
@@ -227,9 +328,11 @@ class _noctificatonState extends State<noctificaton> {
             Container():_bottomSheetButton(
               label: "Task Completed",
                ontap: (){
-                _taskController.markTaskCompleted(task.id!);
-                Get.back();
-               }, 
+                
+                //_taskController.markTaskCompleted(task.id!);
+                Get.to(detailNoctifi());
+               },
+                
                clr: CustomTheme.primaryClr,
                context:context,
                ),
@@ -290,5 +393,85 @@ class _noctificatonState extends State<noctificaton> {
       ),
     );
   }
+  Future<void> _showdaialoguser(BuildContext context){
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+       
+        return AlertDialog(
+          title: const Text('Add Users'),
+          backgroundColor: Colors.white70,
+         
+          content:
+        
+             Column(
+                
+              children: [
+                  Row(
+                    children: [
+                      TextField(
+                             autofocus: false,
+                        decoration: InputDecoration(
+                           hintText: 'search email',
+                           hintStyle: subtitleStyle,
+                            focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: CustomTheme.backgroundColor,
+                            width: 0.8),
+                            ),
+                        ),
+                          
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: IconButton(
+                          icon: Icon(Icons.find_in_page_outlined),
+                        onPressed: (){},)
+                      )
+                    ],
+                  ),
+
+                 Container(
+                  width:400 ,
+                  height:280,
+                      
+                    decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border(),
+                              ),
+                   child: ListView(
+                            shrinkWrap: true,
+                          children: [
+
+                          
+                          
+                           ],),
+                 ),    
+           
+                    
+                    
+              
+                  
+              ],
+             
+                     ),
+        
+          actions: <Widget>[
+            
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Enable'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 } 
 
