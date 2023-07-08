@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class notice extends Model
 {
-    use HasFactory;
+    use HasFactory, Sortable;
     protected $table = 'notice';
     protected $fillable = [
         'id_group',
@@ -15,6 +16,7 @@ class notice extends Model
         'noi_dung',
         'mau_sac',
         'ngay',
+        'time',
         'lap_lai'
     ];
 

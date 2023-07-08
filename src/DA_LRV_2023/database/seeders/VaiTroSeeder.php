@@ -29,7 +29,7 @@ class VaiTroSeeder extends Seeder
         ]);
 
         // VaiTro::firstOrCreate([
-        //     'ten' => 'User'
+        //     'ten' => 'users'
         // ]);
     }
 }

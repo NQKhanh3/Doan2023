@@ -8,13 +8,17 @@
         <title>Quản lý</title>
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
+        <!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"> -->
 
         <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ asset('assets/css/metismenu.min.css') }}" rel="stylesheet" type="text/css">
-        <link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet" type="text/css"> 
         <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ asset('plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ asset('plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css">
+
+
+
         <style>
             .pointer {
                 cursor: pointer;
@@ -77,6 +81,7 @@
         @yield('page-user-js')
         @yield('page-group-js')
         @yield('page-groupuser-js')
+        @yield('page-notice-js')
     </body>
 
 </html>

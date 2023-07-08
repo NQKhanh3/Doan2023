@@ -9,10 +9,11 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kyslik\ColumnSortable\Sortable;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, Sortable;//, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, Sortable;// , SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

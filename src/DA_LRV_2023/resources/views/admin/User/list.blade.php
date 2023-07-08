@@ -44,13 +44,26 @@
                 </div>
             </div>
         </form>
+
+        <!-- <input type="button" id="btn1" value="Check All"/>
+        <input type="button" id="btn2" value="Uncheck All"/>
+        <input type="button" id="btn3" value="Mở Khóa"/>
+        <input type="button" id="btn3" value="Khóa"/>
+        <input type="button" id="btn3" value="Xóa"/> -->
+        <div class="card-header">
+            <a href="#" class="btn btn-secondary" id="deleteall">Delete Selected</a>
+            <a href="#" class="btn btn-danger" id="lockall">Lock</a>
+            <a href="#" class="btn btn-success" id="unlockall">Unlock</a>
+        </div>
+
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
                         <thead class="thead-default">
                             <tr>
-                                <!-- <th scope="col">@sortablelink('ten_tai_khoan', 'Tên Tài Khoản', '', ['style' => 'color: black'])</th> -->
+                                <!-- <th scope="col">Checkbox</th> -->
+                                <th><input type="checkbox" id="checkAll" ></th>
                                 <th scope="col">@sortablelink('username', 'username', '', ['style' => 'color: black'])</th>
                                 <th scope="col">@sortablelink('email', 'Email', '', ['style' => 'color: black'])</th>
                                 <!-- <th scope="col">@sortablelink('sdt', 'Số điện thoại', '', ['style' => 'color: black'])</th> -->
@@ -61,8 +74,8 @@
                         <tbody>
                             @if (count($user) > 0)
                                 @foreach ($user as $user)
-                                <tr>
-                                    <!-- <td>{{ $user->ten_tai_khoan }}</td> -->
+                                <tr id="user_id{{ $user->id }}">
+                                    <td> <input type="checkbox" value="{{ $user->id }}" class="checkboxclass" name="checkbox"> </td>
                                     <td>{{ $user->username }}</td>
                                     <td>{{ $user->email }}</td>
                                     <!-- <td>{{ $user->sdt }}</td> -->
@@ -83,6 +96,7 @@
                                             @endif </a>
                                             <a href="javascript:void(0);" class="btn btn-info btn-sm waves-effect waves-light btn-change" data-toggle="tooltip" data-placement="top" title="Đổi mật khẩu" data-id="{{ $user->id }}"><i class="fas fa-key"></i></a>
                                             <a href="javascript:void(0);" class="btn btn-secondary btn-sm waves-effect waves-light btn-delete" data-id="{{ $user->id }}" data-title="{{ $user->email }}" data-toggle="tooltip" data-placement="top" title="Xóa"><i class="fas fa-trash"></i></a>
+                                            <a href="javascript:void(0);" onclick="edituser({{$user->id}})" class="btn btn-primary btn-sm waves-effect waves-light " title="Sửa" ><i class="fas fa-edit"></i></a>
                                         </div>
                                     </td>
                                 </tr>
@@ -160,6 +174,72 @@
                                             </div>
                                         </div>
                                     </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div id="update" class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered dialogExport">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title mt-0">Update thông tin</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="useredit">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <input type="hidden" name="id" id="user-id">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="new_username" class="control-label">Username</label>
+                                                        <input type="text" class="form-control" id="new_username" name="new_username" minlength="6" maxlength="50" >
+                                                        <span toggle="#new_username"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col-12" style="margin-left: auto;">
+                                                    <div class="row">
+                                                        <div class="col-6 pr-0">
+                                                            <a href="javascript:void(0);" class="btn btn-secondary waves-effect waves-light btn-block" data-dismiss="modal">Hủy</a>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <button type="submit" class="btn btn-success waves-effect waves-light btn-block">Lưu</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="modal fade" id="usereditmodal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true" >
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title mt-0">Update thông tin</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="userForm">
+                                    @csrf
+                                    <input type="hidden" id="id" name="id" />
+                                    <div class="form-group">
+                                        <label for="newusername">User name</label>
+                                        <input type="text" class="form-control" id="newusername" />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save</button>
                                 </form>
                             </div>
                         </div>
@@ -303,6 +383,176 @@
                 }
             });
         });
+
+        // $('.btn-update').click(function() {
+        //     var mId = $(this).data('id');
+        //     $("#update").modal('show');
+        //     $('#user-id').val(mId);
+        // });
+
+        // $('input[type="checkbox"]').change(function() {
+           
+        // //    var $this = $(this);
+        //    var checkbox = document.getElementsByName('checkbox');
+        //         var result = "";
+                 
+        //         // Lặp qua từng checkbox để lấy giá trị
+        //         for (var i = 0; i < checkbox.length; i++){
+        //             if (checkbox[i].checked === true){
+        //                 result += ' [' + checkbox[i].value + ']';
+        //             }
+        //         }
+                 
+        //         // In ra kết quả
+        //         // alert("Sở thích là: " + result);
+
+        //     // if( $this.is(":checked") ) {
+               
+        //     // };
+
+        //  });
     });
+    // document.getElementById("btn1").onclick = function () 
+    //         {
+    //             // Lấy danh sách checkbox
+    //             var checkboxes = document.getElementsByName('checkbox[]');
+ 
+    //             // Lặp và thiết lập checked
+    //             for (var i = 0; i < checkboxes.length; i++){
+    //                 checkboxes[i].checked = true;
+    //             }
+    //         };
+    // document.getElementById("btn2").onclick = function () 
+    //         {
+    //             // Lấy danh sách checkbox
+    //             var checkboxes = document.getElementsByName('checkbox[]');
+
+    //             // Lặp và thiết lập Uncheck
+    //             for (var i = 0; i < checkboxes.length; i++){
+    //                 checkboxes[i].checked = false;
+    //             }
+    //         };
+    
+    //  document.getElementById("btn3").onclick = function () 
+    //         {
+    //             // Lấy danh sách checkbox
+    //             var checkboxes = document.getElementsByName('checkbox[]');
+
+    //             // Lặp và thiết lập Uncheck
+    //             for (var i = 0; i < checkboxes.length; i++){
+    //                 if( checkboxes[i].checked == true ){
+    //                 }
+    //             }
+    //         };
+    $(function(e){
+        $("#checkAll").click(function(){
+            $(".checkboxclass").prop('checked',$(this).prop('checked'));
+        });
+
+        $("#deleteall").click(function(e){
+            e.preventDefault();
+            var data = [];
+
+            $("input:checkbox[name=checkbox]:checked").each(function(){
+                data.push($(this).val());
+            });
+
+             $.ajax({
+                url :  "{{ route('user.deleteall') }}",
+                type: "DELETE",
+                data: { 
+                        // _token:'{{ csrf_token() }}',
+                        _token:$("input[name=_token]").val(),
+                        id : data 
+                },
+                success:function(response){
+                    $.each(data,function(key,val){
+                        $('#user_id'+val).remove();
+                    })
+                }
+                        
+            });
+
+        });
+
+        $("#lockall").click(function(e){
+            e.preventDefault();
+            var data = [];
+
+            $("input:checkbox[name=checkbox]:checked").each(function(){
+                data.push($(this).val());
+            });
+
+             $.ajax({
+                url :  "{{ route('user.lockall') }}",
+                type: "PUT",
+                data: { 
+                        _token:$("input[name=_token]").val(),
+                        id : data
+                },
+                success:function(response){
+                    $.each(data,function(key,val){
+                        $('#user_id'+val).update();
+                    })
+                }
+                        
+            });
+        });
+
+        $("#unlockall").click(function(e){
+            e.preventDefault();
+            var data = [];
+
+            $("input:checkbox[name=checkbox]:checked").each(function(){
+                data.push($(this).val());
+            });
+
+             $.ajax({
+                url :  "{{ route('user.unlockall') }}",
+                type: "PUT",
+                data: {  
+                        id : data ,
+                        _token:$("input[name=_token]").val()
+                },
+                success:function(response){
+                    $.each(data,function(key,val){
+                        $('#user_id'+val).update();
+                    })
+                }
+                        
+            });
+        });
+
+    });
+
+    function edituser(id)
+    {
+        $.get('/user/'+id, function(user){
+           $("#id").val(user.id); 
+           $("#newusername").val(user.username); 
+           $("#usereditmodal").modal('toggle');
+        });
+    };
+    
+    $("#userForm").submit(function(e){
+        e.preventDefault();
+        let id = $("#id").val();
+        let username = $("#newusername").val();
+        let _token = $("input[name=_token]").val();
+        $.ajax({
+            url :  "{{ route('user.update') }}",
+            type: "PUT",
+            data: { id:id,
+                    newusername:username,
+                    _token:_token
+                },
+                success:function(response){
+                    $('#user_id'+response.id + ' td:nth-child(2)').text(response.username);
+                    $("#usereditmodal").modal('toggle');
+                    $("#userForm")[0].reset();
+                }
+        });
+    });
+    
 </script>
 @endsection

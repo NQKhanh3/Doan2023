@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\notice;
 use Illuminate\Support\Facades\Hash;
+use App\Export\NoticeExport;
+use Excel;
 
 class NoticeController_admin extends Controller
 {
@@ -23,6 +25,7 @@ class NoticeController_admin extends Controller
             'noi_dung'     => $req->noi_dung,
             'mau_sac' => $req->mau_sac,
             'ngay' => $req->ngay,
+            'time' => $req->time,
             'lap_lai' => $req->lap_lai
         ];
 
@@ -54,6 +57,10 @@ class NoticeController_admin extends Controller
 
         if (!empty($req->ngay)) {
             $notice->where('ngay', 'like', "%{$req->ngay}%");
+        }
+
+        if (!empty($req->time)) {
+            $notice->where('time', 'like', "%{$req->time}%");
         }
 
         if (!empty($req->lap_lai)) {
@@ -90,41 +97,63 @@ class NoticeController_admin extends Controller
         ]);
     }
 
-    // public function changePass(Request $req) {
-    //     $status = 'error';
+   
+    public function getNoticeId($id)
+    {   
+        $notice = notice::find($id);
+        return response()->json($notice);
+    }
 
-    //     $group = group::find($req->id);
+    public function getNoticeId1($id)
+    {   
+        $notice = notice::find($id);
+        return response()->json($notice);
+    }
 
-    //     if (!empty($group)) {
-    //         $status = 'success';
+    public function getNoticeId2($id)
+    {   
+        $notice = notice::find($id);
+        return response()->json($notice);
+    }
 
-    //         $group->update([
-    //             'password'  => Hash::make($req->new_pass)
-    //         ]);
 
-    //         return redirect()->route("{$this->viewFolder}.list")->with('status', $status)->with('message', $this->msgChangePassSuc);
-    //     }
+    public function update(Request $req) {
+        // $status = 'error';
 
-    //     return redirect()->route("{$this->viewFolder}.list")->with('status', $status)->with('message', $this->msgChangePassErr);
+        $notice = notice::find($req->id);
+        $notice->tieu_de = $req->newtieude;
+        $notice->noi_dung = $req->newnoidung;
+        $notice->mau_sac = $req->newmausac;
+        $notice->ngay = $req->newngay;
+        $notice->time = $req->newtime;
+        $notice->lap_lai = $req->newlaplai;
+        $notice->save();
+        return response()->json($notice);
+        // if (!empty($user)) {
+        //     $status = 'success';
+
+        //     $user->update([
+        //         'username'  => $req->new_username
+        //     ]);
+
+        //     return redirect()->route("{$this->viewFolder}.list")->with('status', $status)->with('message', $this->msgChangePassSuc);
+        // }
+
+       
+    }
+    public function deleteall(Request $request){
+        $id = $request->id;
+        notice::whereIn('id',$id)->delete();
+        return response()->json([
+            'title'     => 'Xóa user',
+            'status'    => 'success',
+            'msg'       => $this->msgDeleteSuc
+        ]);
+    }
+
+    // public function exportIntoExcel()
+    // {
+    //     return Excel::download(new NoticeExport,'Noticelist.xlsx');
     // }
 
-    // public function lockOrUnlockUser(Request $req) {
-    //     $user = User::find($req->id);
-
-    //     if (!empty($user)) {
-    //         $user->update(['bi_khoa' => !$user->bi_khoa]);
-    //         $title = ($user->bi_khoa == 1) ? 'Khóa' : 'Mở khóa';
-    //         return response()->json([
-    //             'title'     => "{$title} user",
-    //             'status'    => 'success',
-    //             'msg'       => 'Thành công'
-    //         ]);
-    //     }
-
-    //     return response()->json([
-    //         'title'     => "{$title} $user",
-    //         'status'    => 'error',
-    //         'msg'       => 'Có lỗi trong khi thực hiện'
-    //     ]);
-    // }
 }

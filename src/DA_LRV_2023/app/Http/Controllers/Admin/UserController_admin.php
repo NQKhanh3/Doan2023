@@ -52,10 +52,61 @@ class UserController_admin extends Controller
 
         $user = $user->orderBy('username')
                                ->paginate($this->limit);
+                            // ->paginate(3);
                             //    echo "<pre>";
                             //    print_r($customers);
-                            //    exit;
+                            //    exit;  
+
         return view("admin.{$this->viewFolder}.list", compact('pageInfo', 'user', 'inputSearch', 'isSearch'));
+
+        // $user = User::paginate(3);
+        // return view("admin.user.list")->with('user',$user);
+
+
+    }
+
+    public function deleteall(Request $request){
+        $id = $request->id;
+        User::whereIn('id',$id)->delete();
+        return response()->json([
+            'title'     => 'Xóa user',
+            'status'    => 'success',
+            'msg'       => $this->msgDeleteSuc
+        ]);
+    }
+
+    public function lockall(Request $request){
+        $id = $request->id;
+        $user = User::whereIn('id',$id)->update(['bi_khoa'  => "1"]);
+        // $user->bi_khoa = "1";
+        // $user->save();
+        // $user->update([
+        //     'bi_khoa'  => "1"
+        // ]);
+        $user->save(); 
+        return response()->json([
+            'title'     => "Update user",
+            'status'    => 'success',
+            'msg'       => 'Thành công'
+        ]);
+
+    }
+
+    public function unlockall(Request $request){
+        $id = $request->id;
+        $user = User::whereIn('id',$id)->update(['bi_khoa'  => "0"]);
+        // $user->bi_khoa = "0";
+        // $user->save();
+        // $user->update([
+        //     'bi_khoa'  => "0"
+        // ]);
+        $user->save(); 
+        return response()->json([
+            'title'     => "Update user",
+            'status'    => 'success',
+            'msg'       => 'Thành công'
+        ]);
+
     }
 
     public function destroy(Request $req) {
@@ -116,5 +167,31 @@ class UserController_admin extends Controller
             'status'    => 'error',
             'msg'       => 'Có lỗi trong khi thực hiện'
         ]);
+    }
+
+    public function getUserById($id)
+    {   
+        $user = User::find($id);
+        return response()->json($user);
+    }
+
+    public function update(Request $req) {
+        // $status = 'error';
+
+        $user = User::find($req->id);
+        $user->username = $req->newusername;
+        $user->save();
+        return response()->json($user);
+        // if (!empty($user)) {
+        //     $status = 'success';
+
+        //     $user->update([
+        //         'username'  => $req->new_username
+        //     ]);
+
+        //     return redirect()->route("{$this->viewFolder}.list")->with('status', $status)->with('message', $this->msgChangePassSuc);
+        // }
+
+       
     }
 }

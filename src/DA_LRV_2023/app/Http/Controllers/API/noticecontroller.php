@@ -60,18 +60,19 @@ class noticecontroller extends Controller
                     'noi_dung' => $request->noi_dung,
                     'mau_sac' => $request->mau_sac,
                     'ngay' => $request->ngay,
+                    'time' => $request->time,
                     'lap_lai' => $request->lap_lai
                 ]);
                 if ($notice){
                     return response()->json([
                         'status' => 200,
-                        "message" => "Tạo task thành công"
+                        "message" => "Tạo Notice thành công"
                     ], 200);
                 }
                 else{
                     return response()->json([
                         'status' => 500,
-                        "message" => "Tạo task không thành công"
+                        "message" => "Tạo Notice không thành công"
                     ], 500);
                 }
         // }
@@ -128,6 +129,7 @@ class noticecontroller extends Controller
                     'noi_dung' => $request->noi_dung,
                     'mau_sac' => $request->mau_sac,
                     'ngay' => $request->ngay,
+                    'time' => $request->time,
                     'lap_lai' => $request->lap_lai,
                 ]);
                 return response()->json([

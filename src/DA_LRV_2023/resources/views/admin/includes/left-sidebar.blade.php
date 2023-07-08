@@ -106,6 +106,13 @@
                     </a>
                 </li>
 
+                <li>
+                <a href="{{ route('notice.list') }}" class="waves-effect @if($page == 'notice') mm-active @endif">
+                        <i class="fas	fa-file-alt"></i>
+                        <span>Notice</span>
+                    </a>
+                </li>
+
                 {{-- @if (Auth::user()->vai_tro_id == 1)
                     <li>
                         <a href="javascript:void(0);" class="waves-effect @if(in_array($page, ['Lãi suất', 'Trả góp'])) mm-active @endif">
