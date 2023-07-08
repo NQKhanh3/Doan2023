@@ -11,10 +11,14 @@ dependencies:
   cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
+  image_picker: ^1.0.0
+  http_parser: ^4.0.2
+  fluttericon: ^2.0.0
   font_awesome_flutter:
   flutter_local_notifications:
   firebase_core: ^2.14.0
-  firebase_messaging: ^14.6.3
+  firebase_messaging: ^14.6.4
+  cloud_firestore: 
   flutter_staggered_animations: ^1.1.1
   flutter_svg: ^2.0.7
   sqflite: 
@@ -23,7 +27,8 @@ dependencies:
   intl:
   google_fonts: 
   date_picker_timeline: ^1.2.5
-  http: ^1.1.0
+  http: ^0.13.4
+  shared_preferences: ^2.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -38,6 +43,7 @@ flutter:
     - assets/img/
     - assets/img/background2.png
     - assets/img/background.png
+    - assets/img/gundam.png
  
   fonts:
     - family: WorkSansSemiBold
@@ -51,4 +57,5 @@ flutter:
     - family: WorkSansMedium
       fonts:
         - asset: assets/fonts/Work_Sans/WorkSans-Medium.ttf
+ 
  

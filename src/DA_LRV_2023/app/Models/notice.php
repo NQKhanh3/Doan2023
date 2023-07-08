@@ -14,10 +14,9 @@ class notice extends Model
         'tieu_de',
         'noi_dung',
         'mau_sac',
-        'ngay_bat_dau',
-        //ngay
-        'lap_lai',
-        'ngay_ket_thuc'
+        'ngay',
+        'time',
+        'lap_lai'
     ];
 
 }

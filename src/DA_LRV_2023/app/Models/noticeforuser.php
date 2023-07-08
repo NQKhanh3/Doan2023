@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class noticeforuser extends Model
 {
     use HasFactory;
-    protected $table = 'group_user';
+    protected $table = 'noticeforuser';
     protected $fillable = [
         'id_notcie',
         'id_user',

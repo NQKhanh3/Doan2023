@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Validator;
 use App\Models\User;
 use App\Http\Resources\usercontroller as UserResoucre;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
 class usercontroller extends Controller
 {
     /**
@@ -71,7 +74,19 @@ class usercontroller extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::find($id);
+        if($user){
+            return response()->json([
+                'status' => 200,
+                "data" => $user
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'status' => 404,
+                "message" => "Không tìm thấy user"
+            ], 404);
+        }
     }
 
     /**
@@ -80,9 +95,35 @@ class usercontroller extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function changepassword(Request $request)
     {
-        //
+       $user = User::find($request->id);
+        if(Hash::check($request->old_password,$user->password ))
+        {
+            if($user){
+                $user->update([
+                    'password' => Hash::make($request->New_password),   
+    
+                ]);
+                return response()->json([
+                    'status' => 200,
+                    "data" => $user
+                ], 200);
+    
+                
+            }
+             else{
+                return response()->json([
+                    'status' => 401,
+                    "message" => "Không tìm thấy user"
+                ], 401);
+            }
+        }
+         return response()->json([
+            'status' => 401,
+            "message" => "sai password"
+        ], 401);
+       
     }
 
     /**
@@ -94,38 +135,32 @@ class usercontroller extends Controller
      */
     public function update(Request $request)
     {
-        // $user= User::findOrFail($id);
-        // if(!empty($user)){
-        // $user->username=$request->username;
-        // // $user->old=$request->old;
-        // // $user->phone=$request->phone;
-        // $user->save();
-       
-        //     return response()->json([
-        //         'code'=>200,
-        //     'data'=> $user,
-        //     ],200);
-        // }
-        //     return response()->json([
-                
-        //     'mess'=>"lỗi ",
-        //     ],400);
-    
+        
         $user = User::find($request->id);
         if(!empty($user)){
             
-            $user->username  = $request->username;
-            $user->hinh_dai_dien  = $request->hinh_dai_dien;
-            $user->google_id  = $request->google_id;
-            $image =$request->file('image');
+            $user->username  =$request->username;
+            //$user->hinh_dai_dien  = $request->hinh_dai_dien;
+            //$user->google_id  = $request->google_id;
+           //dd($request ->hasFile('image'));
             if($request ->hasFile('image')){
-                $new =rand().'.'.$image->getClientOriginalExtension();
-                $image->move(public_path('uploads/images'),$new);
-                
-            };
-            // $user->hinh_dai_dien = 'http://10.0.2.2:8000/uploads/images/'.$new;
-            $user->save(); 
+                $anh_da_dien =$request->file('image');
+                $new =rand().'.'.$anh_da_dien->getClientOriginalExtension();
+               $anh_da_dien->move(public_path('images'),$new);
+               $user->hinh_dai_dien = 'http://10.0.2.2:8000/images/'.$new;
+            
+              $user->save();
             return response()->json(['user'=>$user], 200);
+            };
+            //$image_nen =$request->file('nen');
+           // if($request ->hasFile('nen')){
+           //     $new =rand().'.'.$image_nen->getClientOriginalExtension();
+           //     $image_nen->move(public_path('uploads/images'),$new);
+           //     $user->nen = 'http://10.0.2.2:8000/uploads/images/'.$new;
+           // };
+          
+            
+           
         }
         return response()->json([
             

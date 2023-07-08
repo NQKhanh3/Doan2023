@@ -261,33 +261,34 @@ class _SignUpState extends State<SignUp> {
 void _checkregister(String email,String password,String name,String Confi)async{
 
     if (email.isEmpty || password.isEmpty||name.isEmpty) {
-            showDialog<String>(
-              context: context,
-              builder: (BuildContext context) =>
-                  AlertDialog(
-                content:
-                    const Text('email hoặc mật khẩu trống'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: const Text('Cancel'),
-                  ),
-                ],
-              ),
-            );
+           
+                Get.snackbar("Warring", "you are not a manager!",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.white,
+                  colorText: CustomTheme.yellowClr,
+                  icon: Icon(Icons.warning_amber_rounded,
+                  color: Colors.red,)
+                  );
           }else if(Confi.isEmpty||Confi!=password){
             CustomSnackBar(context, const Text(' fix Confirmation'),backgroundColor: Colors.red);
           } else {
             await NetworkHelper.fetchuser_register(
                     email, password,name)
                 .then((value) {
-           
+                  if(value==true)
                 setState(() {
                   Get.back();
                   CustomSnackBar(
                     context, const Text('register successfull'));
 
                 });
+                else{
+
+                   CustomSnackBar(
+                    context, const Text('register ERROR'),backgroundColor: Colors.red);
+
+                ;
+                }
             });
          
           }

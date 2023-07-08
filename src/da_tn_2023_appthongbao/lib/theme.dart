@@ -12,7 +12,7 @@ class CustomTheme {
   static const Color loginGradientEnd = Color(0xFFf7418c);
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
-  static const Color yellowClr = Color(0xFFE5F741);
+  static const Color yellowClr = Color.fromARGB(255, 247, 189, 65);
   static const Color primaryClr = Color(0xFF4e5ae8);
   static const LinearGradient primaryGradient = LinearGradient(
     colors: <Color>[loginGradientStart, loginGradientEnd],
@@ -108,6 +108,24 @@ TextStyle get subUsernameText{
       fontSize: 20,
       fontWeight: FontWeight.w400,
       color: Colors.white
+    )
+  );
+}
+TextStyle get headingProfileText{
+  return GoogleFonts.lato(
+    textStyle: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w400,
+
+    )
+  );
+}
+TextStyle get subProfileText{
+  return GoogleFonts.lato(
+    textStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      //color: Colors.black54
     )
   );
 }

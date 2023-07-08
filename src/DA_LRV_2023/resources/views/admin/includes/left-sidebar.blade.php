@@ -86,16 +86,23 @@
                 </li> -->
 
                 <li>
-                    <a href="{{ route('User.list') }}" class="waves-effect @if($page == 'user') mm-active @endif">
+                    <a href="{{ route('user.list') }}" class="waves-effect @if($page == 'user') mm-active @endif">
                        <i class="fas fa-portrait"></i>
                         <span>User</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="{{ route('Group.list') }}" class="waves-effect @if($page == 'group') mm-active @endif">
+                    <a href="{{ route('group.list') }}" class="waves-effect @if($page == 'group') mm-active @endif">
                        <i class="fas fa-boxes"></i>
                         <span>Group</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('groupuser.list') }}" class="waves-effect @if($page == 'groupuser') mm-active @endif">
+                       <i class="fas fa-box"></i>
+                        <span>Group User</span>
                     </a>
                 </li>
 

@@ -1,4 +1,9 @@
+import 'dart:ui';
+
+import 'package:da_tn_2023_appthongbao/controllers/db_controller.dart';
 import 'package:da_tn_2023_appthongbao/controllers/task_controller.dart';
+import 'package:da_tn_2023_appthongbao/model/groups.dart';
+import 'package:da_tn_2023_appthongbao/model/noctifi.dart';
 import 'package:da_tn_2023_appthongbao/model/task.dart';
 import 'package:da_tn_2023_appthongbao/theme.dart';
 import 'package:da_tn_2023_appthongbao/ui/add_task_bar.dart';
@@ -8,14 +13,18 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ManagesTaskpage extends StatefulWidget {
-  const ManagesTaskpage({super.key});
+  final group groups;
+  ManagesTaskpage({super.key,required this.groups});
 
   @override
-  State<ManagesTaskpage> createState() => ManagesTaskpageState();
+  State<ManagesTaskpage> createState() => ManagesTaskpageState(groups: this.groups);
 }
 
 class ManagesTaskpageState extends State<ManagesTaskpage> {
-   final _taskController =Get.put(TaskController());
+  late  List<noctifiModel> nocti=[];
+  final group groups;
+
+  ManagesTaskpageState({required this.groups});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +51,16 @@ class ManagesTaskpageState extends State<ManagesTaskpage> {
   }
   _showTaskFormgridview(){
     return Expanded(
-            child: GridView.builder(
+            child: FutureBuilder<List<noctifiModel>>(
+              future:  NetworkHelper.showforGroup(groups.id),
+              builder: (context, snapshot) {
+         if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error'),
+                );
+         } else if(snapshot.hasData){
+          nocti = snapshot.data!;
+           return GridView.builder(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200,
                 childAspectRatio: 3 / 2,
@@ -50,74 +68,84 @@ class ManagesTaskpageState extends State<ManagesTaskpage> {
                 mainAxisSpacing: 20),
             
              padding: const EdgeInsets.all(20),
-            itemCount: _taskController.tasksList.length,
+            itemCount: nocti.length,
           
             itemBuilder:  ( _, index) {
-                Task? task=_taskController.tasksList[index];
+                var task=nocti[index];
               return 
-               GestureDetector(
-                    onTap: () {
-                      _showBottomSheet(context,task);
-                    },
-                    child:Container(
-                  decoration: BoxDecoration(
-                    color: _getBGClr(task?.color??0),
-                    borderRadius: BorderRadius.circular(15)),
-                padding: const EdgeInsets.all(8),
-               
-                child:   Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                  Text( task.title.toString(),style:titleStyle ,),
-                       Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.access_time_rounded,
-                      color: Colors.grey[200],
-                      size: 18,
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      "${task!.startTime}",
-                      style: GoogleFonts.lato(
-                        textStyle:
-                        TextStyle(fontSize: 14, color: Colors.grey[100]),
+               AnimatedContainer(
+                duration: Duration(seconds: 3),
+                 child: GestureDetector(
+                      onTap: () {
+                        _showBottomSheet(context,task);
+                      },
+                      child:Container(
+                    decoration: BoxDecoration(
+                      color: _getBGClr(task?.mauSac??0),
+                      borderRadius: BorderRadius.circular(15)),
+                  padding: const EdgeInsets.all(8),
+                 
+                  child:   Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                    Text( task.tieuDe.toString(),style:titleStyle ,),
+                         Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.access_time_rounded,
+                        color: Colors.grey[200],
+                        size: 18,
                       ),
-                    ),
-               
-                  ],
-              ),
-              Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(Icons.calendar_today_outlined,
-                      color: Colors.grey[200],
-                      size: 18,
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      "${task!.date}",
-                      style: GoogleFonts.lato(
-                        textStyle:
-                        TextStyle(fontSize: 13, color: Colors.grey[100]),
+                      SizedBox(width: 4),
+                      Text(
+                        "${task!.time}",
+                        style: GoogleFonts.lato(
+                          textStyle:
+                          TextStyle(fontSize: 14, color: Colors.grey[100]),
+                        ),
                       ),
+                 
+                    ],
+                             ),
+                             Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(Icons.calendar_today_outlined,
+                        color: Colors.grey[200],
+                        size: 18,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        "${task!.ngay}",
+                        style: GoogleFonts.lato(
+                          textStyle:
+                          TextStyle(fontSize: 13, color: Colors.grey[100]),
+                        ),
+                      ),
+                    ],
+                             ),
+                     SizedBox(height: 12),
+                  Text(
+                    task?.noiDung??"",
+                    style: GoogleFonts.lato(
+                      textStyle: TextStyle(fontSize: 15, color: Colors.grey[100]),
                     ),
-                  ],
-              ),
-                   SizedBox(height: 12),
-                Text(
-                  task?.note??"",
-                  style: GoogleFonts.lato(
-                    textStyle: TextStyle(fontSize: 15, color: Colors.grey[100]),
                   ),
-                ),
-                  ]))
-                );
+                    ]))
+                  ),
+               );
                
                
-            }),
-    );
+            });
+   
+         }return Center(
+                child: CircularProgressIndicator(),
+              );
+              }
+            ) 
+            
+            );
   }
   _appBar(){
     return AppBar(
@@ -135,16 +163,21 @@ class ManagesTaskpageState extends State<ManagesTaskpage> {
           
           ),
         ),
-        title: Text('Group Name',style: headingStyle,),
+        title: Text(groups.name!,style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontFamily: 'WorkSansSemiBold',
+                       fontFeatures: [
+                        FontFeature.enable('smcp'),
+                  ],),),
     );
   }
-   _showBottomSheet(BuildContext context,Task task){
+   _showBottomSheet(BuildContext context,noctifiModel task){
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.only(top: 4),
-        height: task.isCompleted==1?
-        
-        MediaQuery.of(context).size.height*0.24:
+        height: 
         MediaQuery.of(context).size.height*0.32,
         color: Colors.white,
         child: Column(
@@ -164,7 +197,7 @@ class ManagesTaskpageState extends State<ManagesTaskpage> {
                ontap: (){
                 
                 //_taskController.markTaskCompleted(task.id!);
-                Get.to(detailNoctifi());
+                Get.to(detailNoctifi(notify: task,));
                },
                 
                clr: CustomTheme.primaryClr,
@@ -173,7 +206,7 @@ class ManagesTaskpageState extends State<ManagesTaskpage> {
               _bottomSheetButton(
               label: "Re-UP",
                ontap: (){
-                Get.to(Addtaskpage());
+               Get.back();
                }, 
                isClose: true,
                clr: Colors.red[300],
@@ -182,10 +215,35 @@ class ManagesTaskpageState extends State<ManagesTaskpage> {
                   SizedBox(height: 20,),
                    _bottomSheetButton(
               label: "Delete Task",
-               ontap: (){
-                _taskController.delete(task);
+               ontap: ()async{
+                await NetworkHelper.DeleteNotify(task.id!).then((value) {
+                  if(value==true){
+                     Get.back();
+                       Get.snackbar("Sucessful", "Good",
+                  snackPosition: SnackPosition.TOP,
+                  backgroundColor: Colors.white,
+                  colorText: Colors.green,
+                  icon: Icon(Icons.warning_amber_rounded,
+                  color: Colors.green,)
+                  );
+                  
+                  }
+                  else{
+                       Get.back();
+                  Get.snackbar("Wating", "",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.white,
+                  colorText: CustomTheme.yellowClr,
+                  icon: Icon(Icons.warning_amber_rounded,
+                  color: CustomTheme.yellowClr,)
+                  );
+              
+                }
+                }
+                
+                );
+                
                
-                 Get.back();
                }, 
                clr: Colors.red[300],
                context:context,

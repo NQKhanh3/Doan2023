@@ -1,11 +1,18 @@
+import 'dart:ui';
+
+import 'package:da_tn_2023_appthongbao/controllers/db_controller.dart';
 import 'package:da_tn_2023_appthongbao/controllers/task_controller.dart';
-import 'package:da_tn_2023_appthongbao/db/dbhelper.dart';
-import 'package:da_tn_2023_appthongbao/model/task.dart';
+
+import 'package:da_tn_2023_appthongbao/model/groups.dart';
+import 'package:da_tn_2023_appthongbao/model/noctifi.dart';
+
 import 'package:da_tn_2023_appthongbao/services/noctification_services.dart';
 import 'package:da_tn_2023_appthongbao/theme.dart';
 import 'package:da_tn_2023_appthongbao/ui/add_task_bar.dart';
+import 'package:da_tn_2023_appthongbao/ui/add_users.dart';
 import 'package:da_tn_2023_appthongbao/ui/button.dart';
 import 'package:da_tn_2023_appthongbao/ui/list_user_page.dart';
+
 import 'package:da_tn_2023_appthongbao/ui/manages_page.dart';
 import 'package:da_tn_2023_appthongbao/ui/detail_noctifi_page.dart';
 import 'package:da_tn_2023_appthongbao/ui/task_tile.dart';
@@ -13,30 +20,46 @@ import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class noctificaton extends StatefulWidget {
-  const noctificaton({super.key});
+  final group groups;
+  
+  const noctificaton({super.key,required this.groups});
 
   @override
-  State<noctificaton> createState() => _noctificatonState();
+  State<noctificaton> createState() => _noctificatonState(groups: this.groups);
 }
 
 class _noctificatonState extends State<noctificaton> {
+final group groups;
+late  List<noctifiModel> nocti=[];
+_noctificatonState({required this.groups});
   DateTime _selectedDate =DateTime.now();
-  final _taskController =Get.put(TaskController());
+ 
   
  
   @override
  void initState() {
     // TODO: implement initState
     super.initState();
-   var notifyhelper=NotifyHelper();
-    
-  
-   
+    getCred();
   }
+    int? id_user=1;
+  void getCred()async{
+    SharedPreferences pref =await SharedPreferences.getInstance();
+    setState(() {
+        
+         id_user =(pref.getInt('data')??0);
+         
+       
+        
+    });
+  }
+
   
   @override
   Widget build(BuildContext context) {
@@ -56,54 +79,94 @@ class _noctificatonState extends State<noctificaton> {
   }
   _showDrawer(){
     return Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
+       child: ListView(
+           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Color(0xFFfbab66),
+                color: Colors.blue,
               ),
               child: Center(
                  child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    CircleAvatar(child: Text('T'),),
-                   Text('GroupName',
+                    CircleAvatar(child: 
+                    Text(groups.name!.substring(0, 1).toUpperCase(),
+                    style: TextStyle(fontSize: 30),),
+                    radius: 50,
+                    backgroundColor: Colors.white,),
+                    
+                   Text(groups.name!,
                    style: substyle,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _paddingbutton(() => _showdaialoguser(context), 'add users',Icons.person_add,),
-                        _paddingbutton(() => Get.to(()=>ManagesTaskpage()), 'manage',Icons.manage_history,),
-                        _paddingbutton(() => Get.back(), 'out group',Icons.forward_outlined,),
-                    
-                       
-                      ],
-                    )
-                    
                   ],
                  ),
               ),
             ),
-
-            ListTile(
+            _containerlistview('Members', Icons.person, () {
               
-              title: Row(children: [
-                  Icon(Icons.person),
-                   Text('Members')
-
-              ],),
-              onTap: () async {
-                // Update the state of the app
-                // ...
-                print(DateFormat.yMd().format(_selectedDate));
-                Get.back();
-              },
-            ),
+                   Get.to(listUser_page(groups: groups,));
+                     // _taskController.getTasks();  
+           }),
+            _containerlistview('add users', Icons.person_add, () {
+              if(id_user==groups.idLeader){
+                   Get.to(addUser_page(groups: groups,));
+                     // _taskController.getTasks();
+                     
+                }
+                else{
+                   Get.snackbar("Warring", "you are not a manager!",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.white,
+                  colorText: CustomTheme.yellowClr,
+                  icon: Icon(Icons.warning_amber_rounded,
+                  color: Colors.red,)
+                  );
+             
+            }
+             }),
+            _containerlistview('manage',Icons.manage_history, () {
+              if(id_user==groups.idLeader){
+                    Get.to(ManagesTaskpage(groups: groups,));
+                     // _taskController.getTasks();
+                     
+                }
+                else{
+                   Get.snackbar("Warring", "you are not a manager!",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.white,
+                  colorText: CustomTheme.yellowClr,
+                  icon: Icon(Icons.warning_amber_rounded,
+                  color: Colors.red,)
+                  );
+             
+            }
+             }),
+            _containerlistview('edit group',Icons.manage_history, () {
+              if(id_user==groups.idLeader){
+                   Get.back();
+                     // _taskController.getTasks();
+                     
+                }
+                else{
+                   Get.snackbar("Warring", "you are not a manager!",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.white,
+                  colorText: CustomTheme.yellowClr,
+                  icon: Icon(Icons.warning_amber_rounded,
+                  color: Colors.red,)
+                  );
+             
+            }
+              }),
+           
+           SizedBox(height: 20,),
+           Divider(),
+            _containerlistview('out group', Icons.forward_outlined, (){
+              
+               _showdaialoguser(context);})  
+            
+         
+           
         
           
         
@@ -113,55 +176,46 @@ class _noctificatonState extends State<noctificaton> {
       );
       
   }
-  _paddingbutton(
-    Function()?onTap,
-    String text,
-    IconData icons
-    ){
-    return  Padding(padding: EdgeInsets.only(top: 10,),
-                        child:GestureDetector(
-                          onTap: onTap,
-                          child:Column(
-                          children: [
-                           CircleAvatar(
-                            backgroundColor:  Colors.grey,
-                            child: Icon(
-                              icons,
-                              color: Colors.white,
-                              ),
-                           ),
-                           
-                           Text(text,style: TextStyle(
-                            
-                            color: Colors.white
-                           ),)
-                          ],
 
-                        ),
-                        )
-                       ,);
-  }
   _ShowTasks(){     
     return Expanded(
-      child: Obx(() {
-        return ListView.builder(
-          itemCount: _taskController.tasksList.length,
+
+      
+      child:
+      FutureBuilder<List<noctifiModel>>(
+        future: NetworkHelper.showforGroup(groups.id),
+        builder: (context, snapshot) {
+          if(snapshot.hasError){
+             return Center(
+                  child: Text('Error'),
+                );
+
+          }else if(snapshot.hasData){
+             nocti= snapshot.data!;
+           // print('tong sô thong bao: ${nocti.length}');
+          return ListView.builder(
+          itemCount: nocti.length,
+
+          
           itemBuilder: (_,index){
-            Task task=_taskController.tasksList[index];
-            print(task.toJson());
-         
-            if(task.date==DateFormat.yMd().format(_selectedDate)){
-              return AnimationConfiguration.staggeredList(
+           
+           
+            
+           if(nocti[index].ngay==DateFormat.yMd().format(_selectedDate)){
+             return 
+            AnimationConfiguration.staggeredList(
             position: index, 
             child: SlideAnimation(
               child:FadeInAnimation(
-                child: Row(children: [
+                child: Row(
+                  children: [
                   GestureDetector(
                     onTap: () {
+                      Get.to (detailNoctifi(notify: nocti[index],));
                       
-                      _showBottomSheet(context,task);
+                      //_showBottomSheet(context,nocti[index]);
                     },
-                    child: TaskTile(task),
+                    child: TaskTile(nocti[index]),
                 )
                 ]
                 )
@@ -169,13 +223,22 @@ class _noctificatonState extends State<noctificaton> {
               )
               );
           
-            }else{
-              Container();
+           }else{
+            return Container();
             }
         
            });
-      }),
-      );
+     
+     
+          }
+          return Center(
+                child: CircularProgressIndicator(),
+              );
+        },
+        )
+       
+      
+     );
   }
   _addDateBar(){
     return Container(
@@ -236,7 +299,7 @@ class _noctificatonState extends State<noctificaton> {
                 Text( DateFormat.yMMMd().format(DateTime.now()),
                 style: subHeadingStyle,
                 ),
-                Text("today",
+                Text("Today",
                 style: headingStyle,
                 ),
                 
@@ -244,11 +307,24 @@ class _noctificatonState extends State<noctificaton> {
               ),
               
               ),
-             
+
                Mybutton(label: 'Add Task', ontap:() async {
-                  await  Get.to(()=>Addtaskpage());
-                      _taskController.getTasks();
-                       NotifyHelper().ShowNotification(title: "hello",body: 'welcome');
+                if(id_user==groups.idLeader){
+                   await  Get.to(Addtaskpage(groups: groups,));
+                     // _taskController.getTasks();
+                       //NotifyHelper().ShowNotification(title: "hello",body: 'welcome');
+                }
+                else{
+                   Get.snackbar("Warring", "you are not a manager!",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.white,
+                  colorText: CustomTheme.pinkColor,
+                  icon: Icon(Icons.warning_amber_rounded,
+                  color: Colors.red,)
+                  );
+                }
+
+                 
                }
                
                 )
@@ -261,11 +337,12 @@ class _noctificatonState extends State<noctificaton> {
   _appBar(){
     return AppBar(
       elevation: 0,
-       backgroundColor: Color(0xFFfbab66),
-        leading: GestureDetector(
+       
+        leading:
+         GestureDetector(
           onTap: (){
               Get.back();
-            _taskController.getTasks();
+            //_taskController.getTasks();
            
           },
           child: Icon(Icons.arrow_back,
@@ -273,173 +350,50 @@ class _noctificatonState extends State<noctificaton> {
           
           ),
         ),
-        title: Text('Group Name'),
+        title: Text(groups.name.toString(),style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontFamily: 'WorkSansSemiBold',
+                       fontFeatures: [
+                        FontFeature.enable('smcp'),
+                  ],),),
         actions: [ 
           Builder(builder: (context) => 
-            IconButton(
-            onPressed:() {
-              print(DateFormat.yMd().format(_selectedDate));
-          Scaffold.of(context).openEndDrawer();
-        },  icon:  Icon(Icons.person, size: 20,
-        ),
-        ),
+          GestureDetector(
+            onTap: () async{
+             
+                    Scaffold.of(context).openEndDrawer();
+                     // _taskController.getTasks();
+                     
+              
+               
+                 
+            
+            },
+            child:  CircleAvatar(
+            child: Text(groups.name!.substring(0, 1).toUpperCase()),
+          )
+          ,
+          )
+          
           ),
         
         SizedBox(width: 20,)
 ],
     );
   }
-  _showBottomSheet(BuildContext context,Task task){
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.only(top: 4),
-        height: task.isCompleted==1?
-        
-        MediaQuery.of(context).size.height*0.24:
-        MediaQuery.of(context).size.height*0.32,
-        color: Colors.white,
-        child: Column(
-          children: [
-            Container(
-              height: 6,
-              width: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey,
-              ),
-            ),
-            Spacer(),
-            task.isCompleted==1?
-            Container():_bottomSheetButton(
-              label: "Task Completed",
-               ontap: (){
-                
-                //_taskController.markTaskCompleted(task.id!);
-                Get.to(detailNoctifi());
-               },
-                
-               clr: CustomTheme.primaryClr,
-               context:context,
-               ),
-             
-                _bottomSheetButton(
-              label: "Delete Task",
-               ontap: (){
-                _taskController.delete(task);
-               
-                 Get.back();
-               }, 
-               clr: Colors.red[300],
-               context:context,
-               ),
-                   SizedBox(height: 20,),
-                  _bottomSheetButton(
-              label: "Close",
-               ontap: (){
-                Get.back();
-               }, 
-               isClose: true,
-               clr: Colors.red[300],
-               context:context,
-               ),
-                SizedBox(height: 10,),
-
-          ],
-        ),
-      )
-    );
-  }  
-  _bottomSheetButton({
-    required String label,
-    required Function()? ontap,
-    required Color? clr,
-    required BuildContext context,
-    bool isClose=false
-  }){
-    return GestureDetector(
-      onTap:ontap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        height: 55,
-        width: MediaQuery.of(context).size.width*0.9,
-        
-        decoration: BoxDecoration(
-          border: Border.all(width: 2,
-         
-          ),borderRadius: BorderRadius.circular(20),
-           color: isClose==true?Colors.transparent:clr,
-        ),
-        child:Center(child: Text( 
-          label,
-          style: isClose?
-          titleStyle:
-          titleStyle.copyWith(color: Colors.white),
-        ),) ,
-      ),
-    );
-  }
-  Future<void> _showdaialoguser(BuildContext context){
+  Future<void> _showdaialoguser(BuildContext context,){
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
        
         return AlertDialog(
-          title: const Text('Add Users'),
-          backgroundColor: Colors.white70,
-         
-          content:
+          title: const Text('Leave group',style: TextStyle(),),
+          content: Text('you definitely want to leave the group.'+
+          'If you are the group leader, the group will be deleted.'),
         
-             Column(
-                
-              children: [
-                  Row(
-                    children: [
-                      TextField(
-                             autofocus: false,
-                        decoration: InputDecoration(
-                           hintText: 'search email',
-                           hintStyle: subtitleStyle,
-                            focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: CustomTheme.backgroundColor,
-                            width: 0.8),
-                            ),
-                        ),
-                          
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: IconButton(
-                          icon: Icon(Icons.find_in_page_outlined),
-                        onPressed: (){},)
-                      )
-                    ],
-                  ),
-
-                 Container(
-                  width:400 ,
-                  height:280,
-                      
-                    decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border(),
-                              ),
-                   child: ListView(
-                            shrinkWrap: true,
-                          children: [
-
-                          
-                          
-                           ],),
-                 ),    
-           
-                    
-                    
-              
-                  
-              ],
-             
-                     ),
+            
         
           actions: <Widget>[
             
@@ -452,11 +406,67 @@ class _noctificatonState extends State<noctificaton> {
                 Navigator.of(context).pop();
               },
             ),
+             TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('OK'),
+              onPressed: () {
+               _checkoutGroup();
+              },
+            ),
           ],
         );
       },
     );
   }
+ _checkoutGroup(){
+  if(id_user!=groups.idLeader){
+    NetworkHelper.outGroup(id_user!, groups.idLeader!);
 
+  }else{
+    print(groups.id!);
+    NetworkHelper.DeleteGroup(groups.id!);
+    
+  }
+
+ }
+  _containerlistview(
+    String? text,
+    IconData? icon,
+    Function()? ontap
+
+  ){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
+                          boxShadow: [
+                            BoxShadow(
+                              offset: Offset(0, 5),
+                              color: Colors.deepOrange.withOpacity(.2),
+                              spreadRadius: 5,
+                              blurRadius: 10
+                            )
+                          ]
+                        ),
+                        child:ListTile(
+                        leading: Icon(icon),
+                
+                    title: Text(text!),
+    
+              
+                    onTap: 
+                  // Update the state of the app
+                  // ...
+                  //print(DateFormat.yMd().format(_selectedDate));
+                 ontap
+                
+              ), 
+      ),
+    );
+  }
 } 
 

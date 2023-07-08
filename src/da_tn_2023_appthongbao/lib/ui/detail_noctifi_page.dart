@@ -1,3 +1,6 @@
+import 'package:da_tn_2023_appthongbao/controllers/db_controller.dart';
+import 'package:da_tn_2023_appthongbao/model/Users.dart';
+import 'package:da_tn_2023_appthongbao/model/noctifi.dart';
 import 'package:da_tn_2023_appthongbao/theme.dart';
 
 import 'package:flutter/material.dart';
@@ -5,18 +8,52 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:da_tn_2023_appthongbao/controllers/task_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class detailNoctifi extends StatefulWidget {
-  const detailNoctifi({super.key});
+  final noctifiModel notify;
+  const detailNoctifi({super.key,required this.notify});
 
   @override
-  State<detailNoctifi> createState() => _detailNoctifiState();
+  State<detailNoctifi> createState() => _detailNoctifiState(notify: this.notify);
 }
 
 class _detailNoctifiState extends State<detailNoctifi> {
-
+  
+  final noctifiModel notify;
+  late  List<userModel> users=[];
+  _detailNoctifiState({required this.notify});
   final _taskController =Get.put(TaskController());
   String _startTime= DateFormat("hh:mm a").format(DateTime.now()).toString();
+     @override
+  void initState(){
+    super.initState();
+    getCred();
+    getnDB();
+
+  }
+    void getnDB()async{
+    
+     users= await NetworkHelper.fecthUser();
+    }
+  int? id=13;
+  void getCred()async{
+    SharedPreferences pref =await SharedPreferences.getInstance();
+    setState(() {
+        //access_token = pref.getString('login')!;
+        id =(pref.getInt('data')??0);
+    });
+  }
+    _getname(){
+      List<userModel> results =[];
+      results=users.where((element) => 
+      element.id==id).toList();
+      if(results.isNotEmpty){
+        return _showText('Hello, ${results[0].username}', headingStyle,);
+      }
+        return _showText('Hello, Khánh', headingStyle,);
+    } 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +62,7 @@ class _detailNoctifiState extends State<detailNoctifi> {
       children: [
         SizedBox(height:20),
          Center(
-          child: _showText('Hello, Khánh', headingStyle,),),
+          child: _getname(),),
           
            Center(
           child: _showText("you have a new reminder", subTextstyle)),
@@ -43,20 +80,24 @@ class _detailNoctifiState extends State<detailNoctifi> {
               crossAxisAlignment: CrossAxisAlignment.start,
               
               children: [
-                _Titleheading(Icon(Icons.format_color_text,color:Colors.white,),'Title',colorTileStyle),
-                _showText('nguyen quoc khánh',substyle ),
-                _Titleheading(Icon(Icons.assignment,color:Colors.white,),'Note',colorTileStyle),
-                _showText('khánh',substyle ),
-                _Titleheading(Icon(Icons.access_time_rounded,color:Colors.white,),'Time',colorTileStyle),
-                _showText(_startTime,substyle ),
+                _Titleheading(Icons.format_color_text,'Title',colorTileStyle),
+                _showText(notify.tieuDe!,substyle ),
+                _Titleheading(Icons.assignment,'Note',colorTileStyle),
+                _showText(notify.noiDung!,substyle ),
+                _Titleheading(Icons.access_time_rounded,'Time',colorTileStyle),
+                
+                  _showText('${notify.ngay!} - ${notify.time!}',substyle ),
+                  
+                
+               
                 SizedBox(height: 20,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                //Row(
+                  //mainAxisAlignment: MainAxisAlignment.end,
 
-                  children: [Text('Viewer',style: subviewerText,),SizedBox(width: 10,)],
-                  ),
-                   SizedBox(height: 10,),
-               _avatarmember()
+                  //children: [Text('Viewer',style: subviewerText,),SizedBox(width: 10,)],
+                 // ),
+                 //  SizedBox(height: 10,),
+               //_avatarmember()
               ],
 
             ),
@@ -485,13 +526,14 @@ class _detailNoctifiState extends State<detailNoctifi> {
       ),
     );
   }
-  _Titleheading(Icon icon, String text,TextStyle style){
+  _Titleheading(IconData icon, String text,TextStyle style){
     return Padding(
       padding: EdgeInsets.only( left: 10,top: 20),
                 child: Row(
                   children: [
                     
-                   icon,
+                   Icon(icon,color:Colors.white,)
+                   ,
                    SizedBox(width: 10,),
                     _showText(text, style),
                   ],

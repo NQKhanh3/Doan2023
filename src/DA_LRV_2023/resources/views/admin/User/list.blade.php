@@ -2,7 +2,7 @@
 @section('main-content')
 <div class="row">
     <div class="col-12">
-        <form id="search" action="{{ route('User.list') }}" method="GET">
+        <form id="search" action="{{ route('user.list') }}" method="GET">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card m-b-30">
@@ -32,7 +32,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="d-flex justify-content-end">
-                                        <a href="{{ route('User.list') }}" class="mr-1 btn btn-secondary waves-effect waves-light"><i class="fas fa-redo-alt"></i> Làm mới</a>
+                                        <a href="{{ route('user.list') }}" class="mr-1 btn btn-secondary waves-effect waves-light"><i class="fas fa-redo-alt"></i> Làm mới</a>
                                         <button type="submit" class="btn btn-info waves-effect waves-light">
                                             <i class="fas fa-search"></i> Tìm kiếm
                                         </button>
@@ -125,12 +125,12 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ route('User.change-pass') }}" method="POST">
+                                <form action="{{ route('user.change-pass') }}" method="POST">
                                     @csrf
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="row">
-                                                <input type="hidden" name="id" id="customer-id">
+                                                <input type="hidden" name="id" id="user-id">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label for="new_pass" class="control-label">Mật khẩu mới <span style="color: red">*</span></label>
@@ -249,7 +249,7 @@
                         });
 
                         $.ajax({
-                            url : "{!! route('User.lock') !!}",
+                            url : "{!! route('user.lock') !!}",
                             type: "POST",
                             data: { id : mId }
                         }).done(function (res) {
@@ -287,7 +287,7 @@
                         });
 
                         $.ajax({
-                            url : "{!! route('User.delete') !!}",
+                            url : "{!! route('user.delete') !!}",
                             type: "DELETE",
                             data: { id : mId }
                         }).done(function (response) {

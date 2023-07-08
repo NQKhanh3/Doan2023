@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Auth;
 use Validator;
 use App\Models\User;
@@ -22,15 +23,28 @@ class AuthController extends Controller
             ]        
         );
         if($validator->fails())return response()->json($validator->errors());
+        $check=DB::table("users")->where("email",$request->email)->get();
+        if(!$check->isEmpty()){
+            return response()->json([
+                'code'=>401,
+            'message'=>'Email đã tồn tại',
+            ],401
+            );
+        }
+        
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'bi_khoa' => '0',
+            
          ]);
          $token = $user->createToken('auth_token')->plainTextToken;
          return response()->json(
          ['data' => $user,'access_token' => $token, 'token_type' => 'Bearer', ]);
-    }
+    
+           
+        }
 
     public function login(Request $request) 
     {
@@ -52,23 +66,13 @@ class AuthController extends Controller
         // //     // $checktoken =SessionUser::where('id','=',Auth::id())->first();
             // $user =Auth::id();
             $user = User::where('email', $request['email'])->firstOrFail();
-        // //    if(empty( $checktoken)){
-        // //     $usersession= SessionUser::create([
-        // //     'token'=>Str::random(40),
-        // //     'refresh_token'=>Str::random(40),
-        // //     'token_expried'=>date('Y-m-d H:i:s', strtotime('+1 day')),
-        // //     'refresh_token_expried'=>date('Y-m-d H:i:s', strtotime('+7 day')),
-        // //     'id'=>Auth::id(),
-        // //    ]);
-        // // } else {
-        // //     $usersession = $checktoken;
-        // // }
-        return response()->json(['code'=>200,'message' => 'Chào '.$user->username.'! Chúc an lành'],200);
+            $token = $user->createToken('auth_token')->plainTextToken;
+        return response()->json(['data' =>$user->id,'access_token' => $token],200);
         } 
         else{
             return response()->json([
             'code'=>401,
-            'message'=>'Email hoặc Password sai! Vui lòng nhập lại',
+        'message'=>'Email hoặc Password sai! Vui lòng nhập lại',
         ],401
         );
         }

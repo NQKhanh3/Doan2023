@@ -7,14 +7,11 @@ use App\Models\group_user;
 use Illuminate\Http\Request;
 use App\Http\Resources\group_userResouce;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class group_usercontroller extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function index()
     {
         $group =group_user::all() ;
@@ -26,38 +23,29 @@ class group_usercontroller extends Controller
              return response()->json($arr, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+  
     public function create()
     {
         
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $user = User::where('email', 'like',$request->email )->get();
-        // $group = Group::where('id_leader', 'like')
-        // $check=['id_group' => $request->id_group, 'id_user' => $user[0]->id];
-        if( 'id_group' == $request->id_group & 'id_user' == $user[0]->id ){
+         $group = group_user::where(
+            'id_user', $request->id_user)->
+            where('id_group' , $request->id_group)->get();
+        if(!$group->isEmpty()){
             return response()->json([
-                'status' => 500,
+                'status' => 400,
                 "message" => "User đã tồn tại trong group"
-            ], 500);
+                ], 400);
         }
         else{
             $groupuser = group_user::create([
-                    'id_user' => $user[0]->id,
+                    'id_user' => $request->id_user,
                     'id_group' => $request->id_group,
-                    'vai_tro' => 'member'
+                    'vai_tro' => 'member',
+                    'trang_thai'=>0
                 ]);
                 if ($groupuser){
                     return response()->json([
@@ -67,26 +55,40 @@ class group_usercontroller extends Controller
                 }
                 else{
                     return response()->json([
-                        'status' => 500,
+                        'status' => 400,
                         "message" => "Add user vào Group không thành công"
-                    ], 500);
+                    ], 400);
                 }
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         $groupuser = group_user::find($id);
+        
         if($groupuser){
             return response()->json([
                 'status' => 200,
                 "Group User" => $groupuser
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'status' => 404,
+                "message" => "Không tìm thấy Group User"
+            ], 404);
+        }
+    }
+
+    public function showforID_user($id)
+    {
+        $groupuser = group_user::where('id_user',$id)->where("trang_thai",'=',0)->get();
+        
+        if($groupuser){
+            return response()->json([
+                'status' => 200,
+                "data" => $groupuser
             ], 200);
         }
         else{
@@ -115,6 +117,31 @@ class group_usercontroller extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+     public function updatestatus(Request $request)
+     {
+         $groupuser = DB::table('group_user')
+         ->where('id_user',$request->id_user)
+         ->where("id_group",$request->id_group);
+        
+             if ($groupuser){
+                 $groupuser->update([
+                     "trang_thai"=>1
+                 ]);
+                 return response()->json([
+                     'status' => 200,
+                     //"message" => $groupuser
+                     "message" => "Update Group User thành công"
+                     
+                 ], 200);
+             }
+             else{
+                 return response()->json([
+                     'status' => 500,
+                     "message" => "Group User không tồn tại"
+                 ], 500);
+             }
+     }
     public function update(Request $request)
     {
         $groupuser = group_user::find($request->id);
@@ -137,14 +164,11 @@ class group_usercontroller extends Controller
             }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
+
+        
         $groupuser = group_user::find($id);
             if ($groupuser){
                 $groupuser->delete();

@@ -3,11 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:da_tn_2023_appthongbao/theme.dart';
+import 'package:da_tn_2023_appthongbao/model/noctifi.dart';
 import '../model/task.dart';
-import '';
+
 class TaskTile extends StatelessWidget {
-  final Task? task;
-  TaskTile(this.task);
+  final noctifiModel task;
+  const TaskTile(this.task);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class TaskTile extends StatelessWidget {
         //  width: SizeConfig.screenWidth * 0.78,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: _getBGClr(task?.color??0),
+          color: _getBGClr(task?.mauSac??0),
         ),
         child: Row(children: [
          
@@ -31,7 +32,7 @@ class TaskTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                new  Text(
-                  task!.title??"",
+                  task!.tieuDe??"",
                   style: GoogleFonts.lato(
                     textStyle: TextStyle(
                         fontSize: 16,
@@ -52,7 +53,7 @@ class TaskTile extends StatelessWidget {
                     ),
                     SizedBox(width: 4),
                     Text(
-                      "${task!.startTime} - ${task!.endTime}",
+                      task!.ngay??"00:00",
                       style: GoogleFonts.lato(
                         textStyle:
                         TextStyle(fontSize: 13, color: Colors.grey[100]),
@@ -62,7 +63,7 @@ class TaskTile extends StatelessWidget {
                 ),
                 SizedBox(height: 12),
                 Text(
-                  task?.note??"",
+                  task?.noiDung??"",
                   style: GoogleFonts.lato(
                     textStyle: TextStyle(fontSize: 15, color: Colors.grey[100]),
                   ),
@@ -76,18 +77,7 @@ class TaskTile extends StatelessWidget {
             width: 0.5,
             color: Colors.grey[200]!.withOpacity(0.7),
           ),
-          RotatedBox(
-            quarterTurns: 3,
-            child: Text(
-              task!.isCompleted == 1 ? "COMPLETED" : "TODO",
-              style: GoogleFonts.lato(
-                textStyle: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-            ),
-          ),
+         
         ]),
       ),
     );

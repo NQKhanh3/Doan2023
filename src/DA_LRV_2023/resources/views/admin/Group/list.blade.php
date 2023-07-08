@@ -2,14 +2,14 @@
 @section('main-content')
 <div class="row">
     <div class="col-12">
-        <form id="search" action="{{ route('Group.list') }}" method="GET">
+        <form id="search" action="{{ route('group.list') }}" method="GET">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card m-b-30">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-3 form-group">
-                                    <label>Id_leader</label>
+                                    <label>Id leader</label>
                                     <input type="text" id="id_leader" name="id_leader" class="form-control" @if (!empty($inputSearch['id_leader'])) value="{{ $inputSearch['id_leader'] }}" @endif maxlength="50">
                                 </div>
                                 <div class="col-3 form-group">
@@ -20,7 +20,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="d-flex justify-content-end">
-                                        <a href="{{ route('Group.list') }}" class="mr-1 btn btn-secondary waves-effect waves-light"><i class="fas fa-redo-alt"></i> Làm mới</a>
+                                        <a href="{{ route('group.list') }}" class="mr-1 btn btn-secondary waves-effect waves-light"><i class="fas fa-redo-alt"></i> Làm mới</a>
                                         <button type="submit" class="btn btn-info waves-effect waves-light">
                                             <i class="fas fa-search"></i> Tìm kiếm
                                         </button>
@@ -38,7 +38,7 @@
                     <table class="table">
                         <thead class="thead-default">
                             <tr>
-                                <th scope="col">@sortablelink('id_leader', 'id_leader', '', ['style' => 'color: black'])</th>
+                                <th scope="col">@sortablelink('id_leader', 'id leader', '', ['style' => 'color: black'])</th>
                                 <th scope="col">@sortablelink('name', 'Name', '', ['style' => 'color: black'])</th>
                                 <th scope="col">Hành động</th>
                             </tr>
@@ -130,7 +130,7 @@
                         });
 
                         $.ajax({
-                            url : "{!! route('Group.delete') !!}",
+                            url : "{!! route('group.delete') !!}",
                             type: "DELETE",
                             data: { id : mId }
                         }).done(function (response) {

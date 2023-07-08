@@ -7,13 +7,12 @@ use App\Models\group;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Resources\groupcontroller as GroupResoucre;
+use App\Models\group_user;
+use Illuminate\Support\Facades\DB;
+
 class groupcontroller extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+   
     public function index()
     {
         $group =group::all() ;
@@ -25,11 +24,7 @@ class groupcontroller extends Controller
              return response()->json($arr, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+  
     public function create(Request $request)
     {
         // try{
@@ -46,12 +41,7 @@ class groupcontroller extends Controller
         // }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+   
     public function store(Request $request)
     {
 
@@ -64,18 +54,20 @@ class groupcontroller extends Controller
                 ],400);
         }
         else{
-            $group = Group::find($request->id_leader);
-            if (!empty($group)){
-                return response()->json([
-                    'status' => 500,
-                    "message" => "Group đã tồn tại"
-                ], 500);
-            }
-            else{
+            
+              
                 $group = Group::create([
                     'id_leader' => $request->id_leader,
                     'name' => $request->name,
+                    'nen'=>""
                 ]);
+
+                    group_user::create([
+                        'id_group'=>$group->id,
+                        'id_user'=>$request->id_leader,
+                        'vai_tro'=>'quan ly',
+                        'trang_thai'=>1
+                    ]);
                 if ($group){
                     return response()->json([
                         'status' => 200,
@@ -88,17 +80,12 @@ class groupcontroller extends Controller
                         "message" => "Tạo Group không thành công"
                     ], 500);
                 }
-            }
+           
         }
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function show($id)
     {
         $group = Group::find($id);
@@ -115,25 +102,66 @@ class groupcontroller extends Controller
             ], 404);
         }
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function showid_leader($id)
     {
-        //
+        $group = DB::table('group')->where('id_leader','=',$id)->get();
+        if($group){
+            return response()->json([
+                'status' => 200,
+                "data" => $group
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'status' => 404,
+                "message" => "Không tìm thấy group"
+            ], 404);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+   
+    public function showGroupforuser($id)
+    {
+        $groupuser = group_user::select('id_user')->where('id_group','=',$id)->get();
+       
+        //$users = DB::table('users')->join('groupuser','users.id','=',$groupuser)->get();
+        $users = DB::table('users')->whereIn('id',$groupuser)->get();;
+        
+        if($groupuser){
+            return response()->json([
+                'status' => 200,
+                "data" => $users
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'status' => 404,
+                "message" => "Không tìm thấy Group User"
+            ], 404);
+        }
+    }
+    //usergroup
+    public function showUserforgroup($id)
+    {
+        $groupuser = group_user::select(['id_group'])->where('id_user','=',$id)->get();
+        $group = DB::table('group')->whereIn('id',$groupuser)
+        ->get();
+     
+        
+        if($groupuser){
+            return response()->json([
+                'status' => 200,
+                "data" => $group
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'status' => 404,
+                "message" => "Không tìm thấy Group User"
+            ], 404);
+        }
+    }
+    
     public function update(Request $request)
     {
         // $validator = Validator::make($request->all(),[
@@ -146,47 +174,79 @@ class groupcontroller extends Controller
         // }
         // else{
             $group = Group::find($request->id);
-            if ($group){
+           
+              if ($group){
                 $group->update([
-                    // 'id' => $request->id,
+                    
                     'id_leader' => $request->id_leader,
                     'name' => $request->name,
-                ]);
+                   ]);
                 return response()->json([
                     'status' => 200,
                     "message" => "Update Group thành công"
                 ], 200);
             }
+            
+          
             else{
                 return response()->json([
                     'status' => 500,
                     "message" => "Group không tồn tại"
                 ], 500);
             }
-        // }
+        
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function outGroup($request)
     {
-        $group = Group::find($id);
-         if ($group){
+        $group = DB::table('group_user')
+        ->where("id_group","=",$request->id_group)
+            ->where("id_user","=",$request->id_user)->get();
+            
+        
+
+        
+
+            if(!$group->isEmpty()){
                 $group->delete();
+                
                 return response()->json([
                     'status' => 200,
                     "message" => "Delete Group thành công"
                 ], 200);
             }
+            
             else{
                 return response()->json([
-                    'status' => 500,
+                    'status' => 400,
                     "message" => "Group không tồn tại"
-                ], 500);
+                ], 400);
+            }
+
+    }
+    public function destroy($id)
+    {
+        $group = Group::where('id',$id);
+        
+        $notice=DB::table("notice")->where("id_group","=",$id)->get();
+
+         if ($group){
+            $group_user=DB::table('group_user')->where("id_group","=",$id)->delete();
+              
+                   
+                 
+                $group->delete();
+                return response()->json([
+                    'status' => 200,
+                    "message" => "Delete Group thành công"
+                   
+                ], 200);
+            }
+            else{
+                return response()->json([
+                    'status' => 400,
+                    "message" => "Group không tồn tại"
+                ], 400);
             }
     }
 }

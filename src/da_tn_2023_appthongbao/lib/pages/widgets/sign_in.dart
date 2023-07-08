@@ -1,10 +1,18 @@
+import 'dart:convert';
+
 import 'package:da_tn_2023_appthongbao/controllers/db_controller.dart';
+import 'package:da_tn_2023_appthongbao/ui/home_page.dart';
 import 'package:da_tn_2023_appthongbao/ui/noctification_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:da_tn_2023_appthongbao/theme.dart';
 import 'package:da_tn_2023_appthongbao/widgets/snackbar.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+  
+  
+final String Url='http://10.0.2.2:8000/api/';
 
 class SignIn extends StatefulWidget {
   const SignIn({ Key? key}) : super(key: key);
@@ -114,7 +122,7 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                           onSubmitted: (_) {
-                            _toggleSignInButton();
+                          
                           },
                           textInputAction: TextInputAction.go,
                         ),
@@ -265,9 +273,6 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  void _toggleSignInButton() {
-    CustomSnackBar(context, const Text('Login button pressed'));
-  }
 
   void _toggleLogin() {
     setState(() {
@@ -276,34 +281,36 @@ class _SignInState extends State<SignIn> {
   }
   _checklogin(String email,String password)async{
      if (email.isEmpty || password.isEmpty) {
-            showDialog<String>(
-              context: context,
-              builder: (BuildContext context) =>
-                  AlertDialog(
-                content:
-                    const Text('email hoặc mật khẩu trống'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: const Text('Cancel'),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            await NetworkHelper.fetchuser_login(
-                    email.toString(), password.toString())
-                .then((value) {
-            
-                setState(() {
-                  Get.toNamed('/home');
-                  CustomSnackBar(
-                    context, const Text('Login succufull'));
+           CustomSnackBar(
+                    context, const Text('Email, password not emplty'),backgroundColor: Colors.orange);
 
-                });
-            });
            
-          }
+          } else {
+             final response =
+              await http.post(Uri.parse('$Url'+'login'),
+                  //headers: {"Content-Type": "application/json"},
+                  body: {'email': email, 'password': password});
+          if (response.statusCode == 200) {
+             
+              CustomSnackBar(
+                    context, const Text('Login successfull'));
+            final json = jsonDecode(response.body);
+             Get.off(home_page());
+            SharedPreferences pref = await SharedPreferences.getInstance();
+            pref.setString("login",json["access_token"]);
+            pref.setInt('data', json["data"]);
+
+            } else 
+            
+              
+                 
+                  CustomSnackBar(
+                    context, const Text('sai tài khoản hoặc mật khẩu'),backgroundColor: Colors.red);
+
+               
+            };
+           
+          
 
 
   }

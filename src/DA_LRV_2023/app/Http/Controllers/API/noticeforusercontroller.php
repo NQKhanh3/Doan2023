@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\noticeforuser;
 use Illuminate\Http\Request;
 use App\Http\Resources\noticeforuserResouce as noticeforuserResouce;
+use App\Models\User;
+
 class noticeforusercontroller extends Controller
 {
     /**
@@ -42,7 +44,32 @@ class noticeforusercontroller extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        if( 'id_notcie' == $request->id_notcie & 'id_user' == $request->id ){
+            return response()->json([
+                'status' => 500,
+                "message" => "đã có"
+            ], 400);
+        }
+        else{
+            $noticeuser = noticeforuser::create([
+                    'id_user' => $request->id,
+                    'id_notcie' => $request->id_notcie,
+                    'trang_thai' => '1'
+                ]);
+                if ($noticeuser){
+                    return response()->json([
+                        'status' => 200,
+                        "message" => "Add user vào Group thành công"
+                    ], 200);
+                }
+                else{
+                    return response()->json([
+                        'status' => 400,
+                        "message" => "Add user vào Group không thành công"
+                    ], 400);
+                }
+        }
     }
 
     /**
@@ -53,7 +80,21 @@ class noticeforusercontroller extends Controller
      */
     public function show($id)
     {
-        //
+       $not =noticeforuser::where("id_notcie","=",$id)->get();
+       if($not){
+        $count=noticeforuser::where("id_notcie","=",$id)->count();
+        return response()->json([
+            'status' => 200,
+            "data" => $not,
+            "count"=>$count
+        ], 200);
+       }
+       else{
+        return response()->json([
+            'status' => 401,
+            "message" => "Tạo Group không thành công"
+        ], 401);
+    }
     }
 
     /**

@@ -1,76 +1,101 @@
+import 'package:da_tn_2023_appthongbao/controllers/db_controller.dart';
+import 'package:da_tn_2023_appthongbao/model/Users.dart';
+import 'package:da_tn_2023_appthongbao/model/groups.dart';
 import 'package:da_tn_2023_appthongbao/theme.dart';
 import 'package:flutter/material.dart';
 
-class listUser extends StatefulWidget {
-  const listUser({super.key});
+class listUser_page extends StatefulWidget {
+  final group groups;
+  const listUser_page({super.key,required this.groups});
 
   @override
-  State<listUser> createState() => _listUserState();
+  State<listUser_page> createState() => _listUserState(groups: this.groups);
 }
 
-class _listUserState extends State<listUser> {
+class _listUserState extends State<listUser_page> {
+  final group groups;
+  _listUserState({required this.groups});
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue.shade50,
     appBar: _appBar(),
-    body: SingleChildScrollView(
-      physics: ScrollPhysics(),
+    body:  Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+           Text("List user: ",style: TextStyle(fontSize: 22.0,fontWeight: FontWeight.bold),),
+           Divider(),
+            SizedBox(height: 20,),
+            Expanded(
+              child: 
+                    FutureBuilder<List<userModel>>(
+                      future: NetworkHelper.fecthuserforGroup(groups.id),
+                      builder: (context, snapshot) {
+                        if(snapshot.hasError){
+                          return Center(child: Text('Error'),);
+                        }
+                        else if(snapshot.hasData){
+                          var users = snapshot.data!;
+                          return ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: users.length,
+                              itemBuilder: (context, index){
+                                
+                                return Card(
+                                  shadowColor: Color.fromARGB(255, 0, 208, 52).withOpacity(0.5),
+                                  child: ListTile(
+                                          leading:   users[index].hinhDaiDien==null?
+                                      CircleAvatar(
+                                        backgroundColor: Colors.red,
+                                        child: 
+                                        Image(image: AssetImage('assets/img/pngwing.png') )
+                                      
+                                        ):CircleAvatar(
+                                        backgroundImage: NetworkImage("${users[index].hinhDaiDien!}"),
+                                        ),
+                                        title:  Text(users[index].username!,style: titleStyle,),
+                                         subtitle: Text(users[index].email!),
+                                        
+                                    
+                                    ),
+                                              
+                                  );
+                              
+                              }
+                            );
                       
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white,
-                      
+                        }
+                       return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                        }
                     ),
-                      child: ListTile(
-                        
-                        title:  Row(
-                          children: [
-                            ListTile(
-                              leading:   CircleAvatar(
-                                  child: Text('T'),
-                                  backgroundColor: Colors.red,
-                            ),
-                            title:  Text('username',style: titleStyle,),
-                             subtitle: Text('@email'),
-                            ),
-                
-                          ],
-                        ),
-              
+                      
                       ),
-                    
-                    ),
-                  ),
-              
-                 ],
+                  
                
-               ),
-          ),
-            ],
-        
-      ),
+                 
+               
+              ],
+          
+        ),
     ),
     );
+    
   }
   _appBar(){
     return AppBar(
       elevation: 0,
-       backgroundColor: Colors.white,
+       //backgroundColor: Colors.white,
       
         
-        actions: [ Icon(Icons.person_outlined, size: 20,color: Colors.grey,),
-        SizedBox(width: 20,),
-       
-          ],
-          
+      
+         
     );
   }
 }

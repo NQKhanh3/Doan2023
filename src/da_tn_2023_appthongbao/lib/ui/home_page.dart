@@ -1,12 +1,22 @@
+import 'dart:ui';
+
 import 'package:da_tn_2023_appthongbao/controllers/db_controller.dart';
 import 'package:da_tn_2023_appthongbao/controllers/task_controller.dart';
 import 'package:da_tn_2023_appthongbao/model/Users.dart';
 import 'package:da_tn_2023_appthongbao/model/groups.dart';
+import 'package:da_tn_2023_appthongbao/model/noctifi.dart';
+import 'package:da_tn_2023_appthongbao/services/firebase_api.dart';
+import 'package:da_tn_2023_appthongbao/ui/myGroup_page.dart';
 import 'package:da_tn_2023_appthongbao/ui/noctification_page.dart';
+import 'package:da_tn_2023_appthongbao/ui/notify_user.dart';
+import 'package:da_tn_2023_appthongbao/ui/profileUser_page.dart';
+import 'package:da_tn_2023_appthongbao/ui/request.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme.dart';
 import 'button.dart';
@@ -19,26 +29,119 @@ class home_page extends StatefulWidget {
 }
 
 class _home_pageState extends State<home_page> {
-  final _taskController =Get.put(TaskController());
+  
+  String access_token ="";
+  
+  
+  //final _taskController =Get.put(TaskController());
   late  List<group> groups=[];
+  late  List<noctifiModel> notify=[];
+  late  List<userModel> users=[];
   late TextEditingController namecontroller=TextEditingController();
+  late TextEditingController newPasscontroller=TextEditingController();
+  late TextEditingController oldPasscontroller=TextEditingController();
+  late TextEditingController comfirmPasscontroller=TextEditingController();
+  
+  FirebaseNotify notifyFirebase=FirebaseNotify();
+  
+  @override
+  void initState(){
+    super.initState();
+    notifyFirebase.requestNotifyPermission();
+    notifyFirebase.firebaseInit();
+    //notifyFirebase.isTokenrefresh();
+    notifyFirebase.getDeviceToken().then((value){
+      print('token:');
+      print(value);
+    });
+    
+    
+    getCred();
+    getnotify();
+
+    
+  }
+    int? id=13;
+    void getnotify()async{
+     notify= await NetworkHelper.fecthnoctifi();
+     users= await NetworkHelper.fecthUser();
+    }
+  void getCred()async{
+    SharedPreferences pref =await SharedPreferences.getInstance();
+    setState(() {
+         access_token = pref.getString('login')!;
+         id =(pref.getInt('data')??0);
+         
+       
+        
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      appBar: _appBar(),
-      body: SingleChildScrollView(
+      //appBar: _appBar(),
+      drawer: _showDrawer(),
+      body: FutureBuilder<userModel>(
+          future: NetworkHelper.fecthusersById(id.toString()),
+          builder: (context, snapshot) {
+            if(snapshot.hasError){
+               return Text('Error');
+         
+            }else if(snapshot.hasData){
+              var user=snapshot.data!;
+              return  SingleChildScrollView(
         
         child: Stack(
           
           children: [
             Container(
-                
-              height: MediaQuery.of(context).size.width,
-              width: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
               child: Image(
                 image: AssetImage( 'assets/img/background2.png'),fit: BoxFit.cover,),),
             Column(
               children: [
+                SizedBox(height: 20,),
+                Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+
+                    children: [
+                      Text(user.username!,style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                      color: Color.fromARGB(241, 32, 19, 212),
+                      fontSize: 30,
+                      fontFamily: 'WorkSansSemiBold',
+                       fontFeatures: [
+                        FontFeature.enable('smcp'),
+                  ],),),
+                      SizedBox(width: 20,),
+                       Builder(builder: (context) => 
+                        GestureDetector(
+                        onTap: () {
+                         Scaffold.of(context).openDrawer();
+                          //_showdaialoguser(context, true);
+                        },
+                        child:  user.hinhDaiDien.toString().isEmpty?CircleAvatar(
+                        backgroundColor: Colors.white,
+                        maxRadius: 30,
+                         child: 
+                          Image(image: AssetImage('assets/img/gundam.png')),
+                        
+                        ):CircleAvatar(
+                        backgroundColor: Colors.white,
+                        maxRadius: 30,
+                        backgroundImage: NetworkImage("${user.hinhDaiDien}")  
+                         
+                        
+                        )
+                      )
+                       )
+                     ],
+                  ),
+                ),
                 Container(
                        
                       width: MediaQuery.of(context).size.width,
@@ -55,25 +158,48 @@ class _home_pageState extends State<home_page> {
             ),
           ],
         ),
-      ),
+      );
           
-       
+          }
+             return Center(
+                    child: CircularProgressIndicator(),
+                    );
+          },  
+
+   ),
       
     );
   }
-   _appBar(){
-    return AppBar(
-      
-       backgroundColor: Colors.white,
-      
-        
-        actions: [ Icon(Icons.person_outlined, size: 20,color: Colors.grey,),
-        SizedBox(width: 20,),
-       
-          ],
-          
-    );
-  }
+    _cardgroup(group groups){
+     
+      if(notify[1].idGroup==groups.id)
+      return Card(
+            child: 
+                  ListView.builder(
+            itemCount: 1,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: Icon(Icons.attach_file),
+                title: Text(notify[index].tieuDe!),
+                subtitle: Text(notify[index].time!),
+              );
+            },
+          )
+              
+
+
+          );
+          else 
+          return
+          Card(
+            child: ListView(
+               shrinkWrap: true,
+              children:[
+                 ListTile(title: Center(child: Text('chưa có thông báo',style: subTextstyle,))),
+            
+              ] ));
+    }
     _apptaskbar(){
   return Container(
             margin: const EdgeInsets.only(left: 20,right: 20,top: 10),
@@ -87,9 +213,10 @@ class _home_pageState extends State<home_page> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                Text( 'Groups',
-                style: subHeadingStyle,
-                ),
+                //Text( 'Groups',
+               // style: subHeadingStyle,
+                //),
+                Expanded(child: Image(image: AssetImage('assets/img/ninja.png'),))
 
                 
                 ],
@@ -123,7 +250,7 @@ class _home_pageState extends State<home_page> {
   }
    _showTaskFormgridview(){
     return FutureBuilder<List<group>>(
-       future:  NetworkHelper.fecthGroup(),
+       future:  NetworkHelper.fecthGroupsforuser(id),
       builder: (context, snapshot) {
          if (snapshot.hasError) {
                 return Center(
@@ -132,67 +259,69 @@ class _home_pageState extends State<home_page> {
          }
          else if(snapshot.hasData){
           groups = snapshot.data!;
+          
            return Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height-255,
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 3 / 2,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20),
-                
+          height: MediaQuery.of(context).size.height-300,
+          
+                child: ListView.builder(
+                  shrinkWrap: false,
                  padding: const EdgeInsets.all(20),
                 itemCount: groups.length,
-              
                 itemBuilder:  ( _, index) {
-                  
+                 
+                  notifyFirebase.getTopic('${groups[index].id}');
+                 
                   return 
                    GestureDetector(
                         onTap:() async {
-                      await  Get.to(()=>noctificaton());
-                          _taskController.getTasks();
+                      await  Get.to(()=>noctificaton(groups: groups[index]));
+                          //_taskController.getTasks();
                    },
-                   onDoubleTap: (){
-                    _showBottomSheet(context,groups[index].id!);
-                   },
-                        child:Container(
-                      decoration: BoxDecoration(
-                        color: _getBGClr(0),
-                        borderRadius: BorderRadius.circular(15)),
-                    padding: const EdgeInsets.only(left: 5),
-                   
-                    child:   Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-
-                      children: [
-
-                        ListTile(
-                          leading:  CircleAvatar(
-                            backgroundColor: Colors.cyan,
-                            maxRadius: 10,
-                                child: Text(groups[index].name!.substring(0, 1).toUpperCase()),
-                              ),
-                          title: 
-                              Text( groups[index].name.toString(),style:groupNameStyle ,
-                                  overflow: TextOverflow.ellipsis,
-                              
-                           
-                           
+                  
+                        child:Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
                             
+                              decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(40), ),
+                            boxShadow: [
+                              BoxShadow(
+                                offset: Offset(0, 5),
+                                color: const Color.fromARGB(255, 34, 255, 34).withOpacity(.4),
+                                spreadRadius: 5,
+                                blurRadius: 10
+                              )
+                            ]
                           ),
-    
-                        ),
-                        Text('@${groups[index].id_leader.toString()}')
-    
-    
-                         
-                  ]))
+                          child:   Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [                        
+                          ListTile(
+                            leading:  CircleAvatar(
+                              backgroundColor: Colors.cyan,
+                              maxRadius: 15,
+                                  child: Text(groups[index].name!.substring(0, 1).toUpperCase()),
+                                ),
+                            title: 
+                                Text( groups[index].name.toString(),style:subHeadingStyle ,
+                                    overflow: TextOverflow.ellipsis,  
+                            ),
+ 
+                          ),
+                           
+                           _cardgroup(groups[index])
+                           ])),
+                        )
                     );
-                   
-                   
-                }),
+    
+                },
+                
+                
+                ),
+        
+
         );
      
          }
@@ -214,20 +343,22 @@ class _home_pageState extends State<home_page> {
                 borderRadius: BorderRadius.circular(20)
                 ),
                 hintText: 'group name',
-              labelText: ai?"text":null,
+              
             ),
             
 
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
+              onPressed: (){ 
+                Navigator.pop(context, 'Cancel');
+                },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () { 
-                ai?NetworkHelper.updateGroup(10,namecontroller.text):
-                NetworkHelper.fecthGroupCreate(12,namecontroller.text);
+                
+                NetworkHelper.fecthGroupCreate(id.toString(),namecontroller.text);
                 
                 Get.back();
               },
@@ -237,90 +368,234 @@ class _home_pageState extends State<home_page> {
         ),
       );
   }
-  _showBottomSheet(BuildContext context,int id){
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.only(top: 4),
-        height: MediaQuery.of(context).size.height*0.32,
-        color: Colors.white,
-        child: Column(
+   _showDrawer(){
+    return Drawer(
+        child: FutureBuilder<userModel>(
+          future: NetworkHelper.fecthusersById(id.toString()),
+          builder: (context, snapshot) {
+            if(snapshot.hasError){
+               return Text('Error');
+         
+            }else if(snapshot.hasData){
+              var user=snapshot.data!;
+              return
+              ListView(
+           padding: EdgeInsets.zero,
           children: [
-            Container(
-              height: 6,
-              width: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey,
-              ),
+          
+            
+            UserAccountsDrawerHeader(
+             accountName: Text(user.username!,
+                   style: TextStyle(color: Colors.white),),
+             accountEmail:  Text(user.email!,
+                   style: TextStyle(color: Colors.white),),
+             currentAccountPicture: 
+                    user.hinhDaiDien.toString().isEmpty?CircleAvatar(
+                        backgroundColor: Colors.white,
+                        maxRadius: 30,
+                         child: 
+                          Image(image: AssetImage('assets/img/pngwing.png')),
+                        
+                        ):CircleAvatar(
+                        backgroundColor: Colors.white,
+                        maxRadius: 30,
+                        backgroundImage: NetworkImage("${user.hinhDaiDien}")  
+                         
+                        
+                        ) ,
             ),
-            Spacer(),
-           _bottomSheetButton(
-              label: "Completed",
-               ontap: ()async{
-                await  _showdaialoguser(context,true);
-                //_taskController.markTaskCompleted(task.id!);
-                  //Get.back();
-               },
-                
-               clr: CustomTheme.primaryClr,
-               context:context,
-               ),
-             
-                _bottomSheetButton(
-              label: "Delete",
-               ontap: (){
-                  NetworkHelper.DeleteGroup(id);
-                 
-                 Get.back();
-               }, 
-               clr: Colors.red[300],
-               context:context,
-               ),
-                   SizedBox(height: 20,),
-                  _bottomSheetButton(
-              label: "Close",
-               ontap: (){
-                Get.back();
-               }, 
-               isClose: true,
-               clr: Colors.red[300],
-               context:context,
-               ),
-                SizedBox(height: 10,),
+          
+        
+     
+            ListTile(
+              leading: Icon(Icons.account_circle_rounded),
+              title: Text('Profile'),
+              onTap: () async {
+                Get.to(userProfile(user: user,));
+              },
+            ),
 
+              ListTile(
+              leading: Icon(FontAwesome5.bell),
+              title: Text('Request'),
+              onTap: () async {
+                Get.to(Request_page(user: user,));
+              },
+            ),
+
+            ListTile(
+              leading: Icon(FontAwesome5.th),
+              title: Text('My groups'),
+              onTap: () async {
+                Get.to(mygroup(user: user));
+              },
+            ),
+
+              ListTile(
+              leading: Icon(FontAwesome5.calendar_alt),
+              title: Text('My noctificantins'),
+              onTap: () async {
+                Get.to(notifyuser_page(user: user,));
+              },
+            ),
+              ListTile(
+              leading: Icon(FontAwesome5.info),
+              title: Text('change password'),
+              onTap: () async {
+                _dialogchangepassword(context);
+              },
+            ),
+            Divider(),
+              ListTile(
+              leading: Icon(Icons.arrow_circle_left_rounded),
+              title: Text('Exit'),
+              onTap: () async {
+              await NetworkHelper.logOut();
+              },
+            ),
+        
+          ],
+        );
+           
+            } return Center(
+                child: CircularProgressIndicator(),
+              );
+          }
+         
+        )
+      );
+      
+  }
+
+ _dialogchangepassword(BuildContext context,){
+  return showDialog<String>(
+        context: context,
+
+        builder: (BuildContext context) => new AlertDialog(
+          scrollable: true,
+          shape:  RoundedRectangleBorder(
+              borderRadius:
+                BorderRadius.all(
+                  Radius.circular(10.0))),
+          title:  const Text('Change password'),
+          content:  Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height:height*0.5 ,
+                width: width*0.8,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    Padding(
+                    
+                      padding: EdgeInsets.all(10),
+                      child: Text('Old Password:'),),
+                    TextField(
+                       obscureText: true,
+                      controller: oldPasscontroller,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)
+                          ),
+                          hintText: 'old password...',
+                        
+                      ),
+                      
+              
+                    ),
+                    SizedBox(height: 10,),
+                    Padding(
+                    
+                      padding: EdgeInsets.all(10),
+                      child: Text('New Password:'),),
+                     TextField(
+                      obscureText: true,
+                      controller: newPasscontroller,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)
+                          ),
+                          hintText: 'new password...',
+                          
+                        
+                      ),
+                      
+              
+                    ),
+                    SizedBox(height: 10,),
+                    Padding(
+                    
+                      padding: EdgeInsets.all(10),
+                      child: Text('Confirm Password:'),),
+                     TextField(
+                       obscureText: true,
+                      controller: comfirmPasscontroller,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)
+                          ),
+                          hintText: 'confirm password...',
+                        
+                      ),
+                      
+              
+                    ),
+                  ],
+                ),
+              );
+            }
+          ),
+          
+          actions: <Widget>[
+            TextButton(
+              onPressed: (){ 
+                Navigator.pop(context, 'Cancel');
+                },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () { 
+                
+               _checkPassword();
+              },
+              child: const Text('OK'),
+            ),
           ],
         ),
-      )
-    );
-  }  
-  _bottomSheetButton({
-    required String label,
-    required Function()? ontap,
-    required Color? clr,
-    required BuildContext context,
-    bool isClose=false
-  }){
-    return GestureDetector(
-      onTap:ontap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        height: 55,
-        width: MediaQuery.of(context).size.width*0.9,
-        
-        decoration: BoxDecoration(
-          border: Border.all(width: 2,
-         
-          ),borderRadius: BorderRadius.circular(20),
-           color: isClose==true?Colors.transparent:clr,
-        ),
-        child:Center(child: Text( 
-          label,
-          style: isClose?
-          titleStyle:
-          titleStyle.copyWith(color: Colors.white),
-        ),) ,
-      ),
-    );
+      );
+  
+ }
+ _checkPassword(){
+  if(newPasscontroller.text.isNotEmpty&&
+  oldPasscontroller.text.isNotEmpty&&
+  comfirmPasscontroller.text.isNotEmpty){
+    if(newPasscontroller.text==comfirmPasscontroller.text){
+      NetworkHelper.ChangePassword(oldPasscontroller.text, id.toString(),newPasscontroller.text).then((value){
+        if(value==true){
+           Get.snackbar("successfull", "cần đăng nhập lại !",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.white,
+      colorText: CustomTheme.pinkColor,
+      icon: Icon(Icons.warning_amber_rounded,
+      color: Colors.green,));
+          NetworkHelper.logOut();
+        }
+        else{
+            Get.snackbar("Error", "don't !",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.white,
+      colorText: CustomTheme.pinkColor,
+      icon: Icon(Icons.warning_amber_rounded,
+      color: Colors.red,));
+        }
+
+      });
+    }
   }
- 
+ }
+
  }

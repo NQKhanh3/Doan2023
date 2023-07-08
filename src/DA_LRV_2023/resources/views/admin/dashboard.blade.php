@@ -11,7 +11,7 @@
 @section('page-js')
 @endsection
 
-@section('page-custom-js')
+@section('page-user-js')
 <script type="text/javascript">
     $(document).ready(function() {
         const Toast = Swal.mixin({

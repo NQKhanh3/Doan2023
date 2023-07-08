@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "885202335516",
+    "project_id": "doantn2023-f12a0",
+    "storage_bucket": "doantn2023-f12a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885202335516:android:50b7aa42c314fc16c2ecd9",
+        "android_client_info": {
+          "package_name": "com.example.da_tn_2023_appthongbao"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "885202335516-b4cd93qd3cn106614phj4ccb6cqb0015.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtfAQm4Lv_w9pNQVYsVQmXPfiEtphorjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "885202335516-b4cd93qd3cn106614phj4ccb6cqb0015.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
