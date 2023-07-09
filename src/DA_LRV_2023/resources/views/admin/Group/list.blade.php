@@ -32,12 +32,16 @@
                 </div>
             </div>
         </form>
+        <div class="card-header">
+            <a href="#" class="btn btn-secondary" id="deleteall">Delete Selected</a>
+        </div>
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
                         <thead class="thead-default">
                             <tr>
+                                <th><input type="checkbox" id="checkAll" ></th>
                                 <th scope="col">@sortablelink('id_leader', 'id leader', '', ['style' => 'color: black'])</th>
                                 <th scope="col">@sortablelink('name', 'Name', '', ['style' => 'color: black'])</th>
                                 <th scope="col">Hành động</th>
@@ -46,12 +50,14 @@
                         <tbody>
                             @if (count($group) > 0)
                                 @foreach ($group as $group)
-                                <tr>
+                                <tr id="group_id{{ $group->id }}"> 
+                                     <td> <input type="checkbox" value="{{ $group->id }}" class="checkboxclass" name="checkbox"> </td>
                                     <td>{{ $group->id_leader }}</td>
                                     <td>{{ $group->name }}</td>
                                     <td>
                                         <div>
-                                            <a href="javascript:void(0);" class="btn btn-secondary btn-sm waves-effect waves-light btn-delete" data-id="{{ $group->id }}" data-title="{{ $group->id_leader }}" data-toggle="tooltip" data-placement="top" title="Xóa"><i class="fas fa-trash"></i></a>
+                                          <a href="javascript:void(0);" onclick="editgroup({{$group->id}})" class="btn btn-primary btn-sm waves-effect waves-light " title="Sửa" ><i class="fas fa-edit"></i></a>
+                                          <a href="javascript:void(0);" class="btn btn-secondary btn-sm waves-effect waves-light btn-delete" data-id="{{ $group->id }}" data-title="{{ $group->id_leader }}" data-toggle="tooltip" data-placement="top" title="Xóa"><i class="fas fa-trash"></i></a>
                                         </div>
                                     </td>
                                 </tr>
@@ -84,6 +90,29 @@
                     </div>
                 </div>
                 @endif
+            </div>
+            <div class="modal fade" id="groupeditmodal" tabindex="-1" aria-labelledby="groupModalLabel" aria-hidden="true" >
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title mt-0">Update thông tin</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="groupForm">
+                                    @csrf
+                                    <input type="hidden" id="id" name="id" />
+                                    <div class="form-group">
+                                        <label for="newname">Name</label>
+                                        <input type="text" class="form-control" id="newname" />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -145,6 +174,66 @@
                     })
                 }
             });
+        });
+    });
+
+    $(function(e){
+        $("#checkAll").click(function(){
+            $(".checkboxclass").prop('checked',$(this).prop('checked'));
+        });
+        $("#deleteall").click(function(e){
+            e.preventDefault();
+            var data = [];
+
+            $("input:checkbox[name=checkbox]:checked").each(function(){
+                data.push($(this).val());
+            });
+
+             $.ajax({
+                url :  "{{ route('group.deleteall1') }}",
+                type: "DELETE",
+                data: { 
+                        // _token:'{{ csrf_token() }}',
+                        _token:$("input[name=_token]").val(),
+                        id : data 
+                },
+                success:function(response){
+                    $.each(data,function(key,val){
+                        $('#group_id'+val).remove();
+                    })
+                }
+                        
+            });
+
+        });
+    });
+
+    function editgroup(id)
+    {
+        $.get('/group/'+id, function(group){
+           $("#id").val(group.id); 
+           $("#newname").val(group.name); 
+           $("#groupeditmodal").modal('toggle');
+        });
+    };
+    
+    $("#groupForm").submit(function(e){
+        e.preventDefault();
+        let id = $("#id").val();
+        let name = $("#newname").val();
+        let _token = $("input[name=_token]").val();
+        $.ajax({
+            url :  "{{ route('group.update') }}",
+            type: "PUT",
+            data: { id:id,
+                    newname:name,
+                    _token:_token
+                },
+                success:function(response){
+                    $('#group_id'+response.id + ' td:nth-child(3)').text(response.name);
+                    $("#groupeditmodal").modal('toggle');
+                    $("#groupForm")[0].reset();
+                }
         });
     });
 </script>

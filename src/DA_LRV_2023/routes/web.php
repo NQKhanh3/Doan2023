@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\UserController_admin;
 use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\API\usercontroller;
 use Illuminate\Support\Facades\Route;
+use PHPUnit\Framework\Error\Notice;
 
 /*
 |--------------------------------------------------------------------------
@@ -138,6 +139,11 @@ Route::group(['middleware' => 'auth:admin'], function() {
                 Route::post('khoa-hoac-mo-khoa',  [UserController_admin::class,'lockOrUnlockUser'])->name('lock');
             });
         });
+        Route::delete('/deleteall',[UserController_admin::class,'deleteall'])->name('user.deleteall');
+        Route::put('/lockall',[UserController_admin::class,'lockall'])->name('user.lockall');
+        Route::put('/unlockall',[UserController_admin::class,'unlockall'])->name('user.unlockall');
+        Route::get('/user/{id}',[UserController_admin::class,'getUserById']);
+        Route::put('/user',  [UserController_admin::class,'update'])->name('user.update');
 
         Route::prefix('admin/group')->group(function() {
             Route::name('group.')->group(function() {
@@ -145,6 +151,9 @@ Route::group(['middleware' => 'auth:admin'], function() {
                 Route::delete('xoa',  [GroupController_admin::class,'destroy'])->name('delete');
             });
         });
+        Route::delete('/deleteall1',[GroupController_admin::class,'deleteall'])->name('group.deleteall1');
+        Route::get('/group/{id}',[GroupController_admin::class,'getGroupById']);
+        Route::put('/group',  [GroupController_admin::class,'update'])->name('group.update');
 
         Route::prefix('admin/groupuser')->group(function() {
             Route::name('groupuser.')->group(function() {
@@ -152,6 +161,9 @@ Route::group(['middleware' => 'auth:admin'], function() {
                 Route::delete('xoa',  [GroupUserController_admin::class,'destroy'])->name('delete');
             });
         });
+        Route::delete('/deleteall2',[GroupUserController_admin::class,'deleteall'])->name('groupuser.deleteall2');
+        Route::get('/groupuser/{id}',[GroupUserController_admin::class,'getGroupUserById']);
+        Route::put('/groupuser',  [GroupUserController_admin::class,'update'])->name('groupuser.update');
 
         Route::prefix('admin/notice')->group(function() {
             Route::name('notice.')->group(function() {
@@ -159,6 +171,12 @@ Route::group(['middleware' => 'auth:admin'], function() {
                 Route::delete('xoa',  [NoticeController_admin::class,'destroy'])->name('delete');
             });
         });
+        Route::delete('/deleteall3',[NoticeController_admin::class,'deleteall'])->name('notice.deleteall3');
+        Route::get('/notice/{id}',[NoticeController_admin::class,'getNoticeId']);
+        Route::get('/notice1/{id}',[NoticeController_admin::class,'getNoticeId1']);
+        Route::get('/notice2/{id}',[NoticeController_admin::class,'getNoticeId2']);
+        Route::put('/notice',  [NoticeController_admin::class,'update'])->name('notice.update');
+        // Route::get('/export-excel',[NoticeController_admin::class,'exportIntoExcel']);
 
         //oder code
         

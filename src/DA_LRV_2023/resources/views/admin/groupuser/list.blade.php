@@ -36,13 +36,17 @@
                 </div>
             </div>
         </form>
+        <div class="card-header">
+            <a href="#" class="btn btn-secondary" id="deleteall">Delete Selected</a>
+        </div>
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
                         <thead class="thead-default">
                             <tr>
-                                <th scope="col">@sortablelink('idgroup', 'id group', '', ['style' => 'color: black'])</th>
+                                <th><input type="checkbox" id="checkAll" ></th>
+                                <th scope="col">@sortablelink('id_group', 'id group', '', ['style' => 'color: black'])</th>
                                 <th scope="col">@sortablelink('id_user', 'id user', '', ['style' => 'color: black'])</th>
                                 <th scope="col">@sortablelink('vai_tro', 'vai tro', '', ['style' => 'color: black'])</th>
                                 <th scope="col">Hành động</th>
@@ -51,12 +55,14 @@
                         <tbody>
                             @if (count($groupuser) > 0)
                                 @foreach ($groupuser as $groupuser)
-                                <tr>
+                                <tr id="groupuser_id{{ $groupuser->id }}">
+                                    <td> <input type="checkbox" value="{{ $groupuser->id }}" class="checkboxclass" name="checkbox"> </td>
                                     <td>{{ $groupuser->id_group }}</td>
                                     <td>{{ $groupuser->id_user }}</td>
                                     <td>{{ $groupuser->vai_tro }}</td>
                                     <td>
                                         <div>
+                                            <a href="javascript:void(0);" onclick="editgroupuser({{$groupuser->id}})" class="btn btn-primary btn-sm waves-effect waves-light " title="Sửa" ><i class="fas fa-edit"></i></a>
                                             <a href="javascript:void(0);" class="btn btn-secondary btn-sm waves-effect waves-light btn-delete" data-id="{{ $groupuser->id }}" data-title="{{ $groupuser->id_group }}" data-toggle="tooltip" data-placement="top" title="Xóa"><i class="fas fa-trash"></i></a>
                                         </div>
                                     </td>
@@ -92,6 +98,29 @@
                 @endif
             </div>
         </div>
+        <div class="modal fade" id="groupusereditmodal" tabindex="-1" aria-labelledby="groupuserModalLabel" aria-hidden="true" >
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title mt-0">Update thông tin</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="groupuserForm">
+                                    @csrf
+                                    <input type="hidden" id="id" name="id" />
+                                    <div class="form-group">
+                                        <label for="newvaitro">Vai trò</label>
+                                        <input type="text" class="form-control" id="newvaitro" />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
     </div>
 </div>
 @endsection
@@ -153,5 +182,67 @@
             });
         });
     });
+
+    $(function(e){
+        $("#checkAll").click(function(){
+            $(".checkboxclass").prop('checked',$(this).prop('checked'));
+        });
+
+        $("#deleteall").click(function(e){
+            e.preventDefault();
+            var data = [];
+
+            $("input:checkbox[name=checkbox]:checked").each(function(){
+                data.push($(this).val());
+            });
+
+             $.ajax({
+                url :  "{{ route('groupuser.deleteall2') }}",
+                type: "DELETE",
+                data: { 
+                        // _token:'{{ csrf_token() }}',
+                        _token:$("input[name=_token]").val(),
+                        id : data 
+                },
+                success:function(response){
+                    $.each(data,function(key,val){
+                        $('#groupuser_id'+val).remove();
+                    })
+                }
+                        
+            });
+
+        });
+    });
+
+    function editgroupuser(id)
+    {
+        $.get('/groupuser/'+id, function(groupuser){
+           $("#id").val(groupuser.id); 
+           $("#newvaitro").val(groupuser.vai_tro); 
+           $("#groupusereditmodal").modal('toggle');
+        });
+    };
+    
+    $("#groupuserForm").submit(function(e){
+        e.preventDefault();
+        let id = $("#id").val();
+        let vai_tro = $("#newvaitro").val();
+        let _token = $("input[name=_token]").val();
+        $.ajax({
+            url :  "{{ route('groupuser.update') }}",
+            type: "PUT",
+            data: { id:id,
+                    newvaitro:vai_tro,
+                    _token:_token
+                },
+                success:function(response){
+                    $('#groupuser_id'+response.id + ' td:nth-child(4)').text(response.vai_tro);
+                    $("#groupusereditmodal").modal('toggle');
+                    $("#groupuserForm")[0].reset();
+                }
+        });
+    });
+    
 </script>
 @endsection

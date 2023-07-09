@@ -107,4 +107,38 @@ class GroupController_admin extends Controller
     //         'msg'       => 'Có lỗi trong khi thực hiện'
     //     ]);
     // }
+    public function getGroupById($id)
+    {   
+        $group = group::find($id);
+        return response()->json($group);
+    }
+
+    public function update(Request $req) {
+        // $status = 'error';
+
+        $group = group::find($req->id);
+        $group->name = $req->newname;
+        $group->save();
+        return response()->json($group);
+        // if (!empty($user)) {
+        //     $status = 'success';
+
+        //     $user->update([
+        //         'username'  => $req->new_username
+        //     ]);
+
+        //     return redirect()->route("{$this->viewFolder}.list")->with('status', $status)->with('message', $this->msgChangePassSuc);
+        // }
+
+       
+    }
+    public function deleteall(Request $request){
+        $id = $request->id;
+        group::whereIn('id',$id)->delete();
+        return response()->json([
+            'title'     => 'Xóa user',
+            'status'    => 'success',
+            'msg'       => $this->msgDeleteSuc
+        ]);
+    }
 }

@@ -19,9 +19,9 @@ class CreateNotice extends Migration
             $table->string('tieu_de', 30);
             $table->string('noi_dung');
             $table->string('mau_sac', 100)->nullable();
-            $table->datetime('ngay');
+            $table->string('ngay');
             $table->longText('lap_lai');
-            // $table->datetime('ngay_ket_thuc');
+            $table->string('time');
             $table->timestamps();
         });
     }

@@ -112,4 +112,38 @@ class GroupUserController_admin extends Controller
     //         'msg'       => 'Có lỗi trong khi thực hiện'
     //     ]);
     // }
+    public function getGroupUserById($id)
+    {   
+        $groupuser = group_user::find($id);
+        return response()->json($groupuser);
+    }
+
+    public function update(Request $req) {
+        // $status = 'error';
+
+        $groupuser = group_user::find($req->id);
+        $groupuser->vai_tro = $req->newvaitro;
+        $groupuser->save();
+        return response()->json($groupuser);
+        // if (!empty($user)) {
+        //     $status = 'success';
+
+        //     $user->update([
+        //         'username'  => $req->new_username
+        //     ]);
+
+        //     return redirect()->route("{$this->viewFolder}.list")->with('status', $status)->with('message', $this->msgChangePassSuc);
+        // }
+
+       
+    }
+    public function deleteall(Request $request){
+        $id = $request->id;
+        group_user::whereIn('id',$id)->delete();
+        return response()->json([
+            'title'     => 'Xóa user',
+            'status'    => 'success',
+            'msg'       => $this->msgDeleteSuc
+        ]);
+    }
 }
