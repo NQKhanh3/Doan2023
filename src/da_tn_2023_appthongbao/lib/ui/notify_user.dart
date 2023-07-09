@@ -7,6 +7,7 @@ import 'package:da_tn_2023_appthongbao/ui/detail_noctifi_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class notifyuser_page extends StatefulWidget {
   final userModel user;
@@ -25,7 +26,7 @@ class _notifyuser_pageState extends State<notifyuser_page> {
       appBar: _appBar(),
       body: Container(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             FutureBuilder<List<group>>(
@@ -47,10 +48,13 @@ class _notifyuser_pageState extends State<notifyuser_page> {
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: [
-                          Text(groups[index].name!,style: subtitleStyle,),
-                          Divider(),
-                          _showTaskFormgridview(groups[index].id)
+                          Text(groups[index].name!,style: subHeadingStyle,),
+                          Divider(thickness: 1.3),
+                        
+                           _showTaskFormgridview(groups[index])
 
+                          
+                         
                         ],
                       ),
                     );
@@ -86,10 +90,10 @@ class _notifyuser_pageState extends State<notifyuser_page> {
         return CustomTheme.primaryClr;
     }
   }
-  _showTaskFormgridview(groups){
-    return Expanded(
-            child: FutureBuilder<List<noctifiModel>>(
-              future:  NetworkHelper.showforGroup(groups.id),
+    DateTime _selectedDate =DateTime.now();
+  _showTaskFormgridview(group group){
+    return  FutureBuilder<List<noctifiModel>>(
+              future:  NetworkHelper.showforGroup(group.id),
               builder: (context, snapshot) {
          if (snapshot.hasError) {
                 return Center(
@@ -97,82 +101,51 @@ class _notifyuser_pageState extends State<notifyuser_page> {
                 );
          } else if(snapshot.hasData){
           var nocti = snapshot.data!;
-           return GridView.builder(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 3 / 2,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20),
-            
+
+          if(nocti.isEmpty){
+            return Center(child: Text('không có thông báo'),);
+          }
+           return ListView.builder(
+           
              padding: const EdgeInsets.all(20),
+            shrinkWrap: true,
+           
             itemCount: nocti.length,
-          
             itemBuilder:  ( _, index) {
                 var task=nocti[index];
-              return 
-               AnimatedContainer(
-                duration: Duration(seconds: 3),
-                 child: GestureDetector(
-                      onTap: () {
-                        detailNoctifi(notify: task,);
-                        //_showBottomSheet(context,task);
-                      },
-                      child:Container(
-                    decoration: BoxDecoration(
-                      color: _getBGClr(task?.mauSac??0),
-                      borderRadius: BorderRadius.circular(15)),
-                  padding: const EdgeInsets.all(8),
-                 
-                  child:   Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                    Text( task.tieuDe.toString(),style:titleStyle ,),
-                         Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.access_time_rounded,
-                        color: Colors.grey[200],
-                        size: 18,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        "${task!.time}",
+              return task.ngay == DateFormat.yMd().format(_selectedDate)?
+              
+              GestureDetector(
+                        onTap: () {
+                          Get.to( detailNoctifi(notify: task,));
+                          //_showBottomSheet(context,task);
+                        },
+                        child:Container(
+                      decoration: BoxDecoration(
+                        color: _getBGClr(task?.mauSac??0),
+                        borderRadius: BorderRadius.circular(15)),
+                    padding: const EdgeInsets.all(8),
+                   
+                    child:   Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                      Text( task.tieuDe.toString(),style:titleStyle ,),
+                      
+                               
+                       SizedBox(height: 12),
+                    Flexible(
+                      child: Text(
+                        task?.noiDung??"",
                         style: GoogleFonts.lato(
-                          textStyle:
-                          TextStyle(fontSize: 14, color: Colors.grey[100]),
+                          textStyle: TextStyle(fontSize: 15, color: Colors.grey[100]),
                         ),
+                        overflow:TextOverflow.fade ,
                       ),
-                 
-                    ],
-                             ),
-                             Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(Icons.calendar_today_outlined,
-                        color: Colors.grey[200],
-                        size: 18,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        "${task!.ngay}",
-                        style: GoogleFonts.lato(
-                          textStyle:
-                          TextStyle(fontSize: 13, color: Colors.grey[100]),
-                        ),
-                      ),
-                    ],
-                             ),
-                     SizedBox(height: 12),
-                  Text(
-                    task?.noiDung??"",
-                    style: GoogleFonts.lato(
-                      textStyle: TextStyle(fontSize: 15, color: Colors.grey[100]),
                     ),
-                  ),
-                    ]))
-                  ),
-               );
+                      ]))
+                   
+                 
+               ):Container() ;
                
                
             });
@@ -181,8 +154,7 @@ class _notifyuser_pageState extends State<notifyuser_page> {
                 child: CircularProgressIndicator(),
               );
               }
-            ) 
-            
+             
             );
   }
  

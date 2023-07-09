@@ -109,14 +109,22 @@ class _home_pageState extends State<home_page> {
                     mainAxisAlignment: MainAxisAlignment.end,
 
                     children: [
-                      Text(user.username!,style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                      color: Color.fromARGB(241, 32, 19, 212),
-                      fontSize: 30,
-                      fontFamily: 'WorkSansSemiBold',
-                       fontFeatures: [
-                        FontFeature.enable('smcp'),
-                  ],),),
+                      Flexible(
+                        child: Container(
+                          child: Text(user.username!,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                          color: Color.fromARGB(241, 32, 19, 212),
+                          fontSize: 20,
+                          fontFamily: 'WorkSansSemiBold',
+                           fontFeatures: [
+                            FontFeature.enable('smcp'),
+                          ],),
+                         
+                          ),
+                        ),
+                      ),
                       SizedBox(width: 20,),
                        Builder(builder: (context) => 
                         GestureDetector(

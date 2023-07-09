@@ -353,7 +353,7 @@ _noctificatonState({required this.groups});
         title: Text(groups.name.toString(),style: TextStyle(
                         fontWeight: FontWeight.w800,
                       color: Colors.white,
-                      fontSize: 30,
+                      fontSize: 20,
                       fontFamily: 'WorkSansSemiBold',
                        fontFeatures: [
                         FontFeature.enable('smcp'),
